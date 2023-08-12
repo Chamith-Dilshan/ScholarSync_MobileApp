@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "413639912771",
+    "project_id": "scholarsync-d3226",
+    "storage_bucket": "scholarsync-d3226.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413639912771:android:e6acf0ed2439ddc6f6d3f6",
+        "android_client_info": {
+          "package_name": "com.kamikazekoders.scholarsync"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413639912771-46vigfn2ebo6pqpct0pm9g73isl6g33m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfhZ5jmoIQQM4V4S9lf4MUpVfpWrnA388"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413639912771-46vigfn2ebo6pqpct0pm9g73isl6g33m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
