@@ -4,6 +4,7 @@ import 'package:scholarsync/features/widgets/rounded_small_button.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/image_constants.dart';
 import 'package:scholarsync/features/widgets/auth_field.dart';
+import 'package:scholarsync/resources/auth_methods.dart';
 import 'package:scholarsync/theme/palette.dart';
 
 class LogInPage extends StatefulWidget {
@@ -14,22 +15,46 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool isChecked= false;
   bool _obscureText =true;
+  bool _isLoadig = false;
 
   @override
   void dispose(){
     super.dispose();
-    emailController.dispose();
-    passwordController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     
+  }
+
+  void logInUser() async {
+    print("logfuck");
+    setState(() {
+      _isLoadig = true;
+    });
+    AuthMethods().loginUser(email: _emailController.text, password: _passwordController.text);
+    setState(() {
+      _isLoadig = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+    // _isLoadig ? Scaffold(
+    //     body: Center(
+    //       child: Container(
+    //         color: PaletteLightMode.textColor,
+    //         alignment: Alignment.center,
+    //         child: const CircularProgressIndicator(
+    //           color: PaletteLightMode.whiteColor,
+    //         ),
+    //       ),
+    //     ),
+    // ) :
+    Scaffold(
     body: Stack(
     children: [
       // Background image
@@ -66,7 +91,7 @@ class _LogInPageState extends State<LogInPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: AuthField(
-                      controller: emailController,
+                      controller: _emailController,
                       hintText: 'Email',
                       fontSize: 14,
                       frontIcon: IconConstants.mailIcon,
@@ -77,7 +102,7 @@ class _LogInPageState extends State<LogInPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: TextFormField(
-                      controller: passwordController,
+                      controller: _passwordController,
                       obscureText: _obscureText,
                       decoration: InputDecoration(
                         focusedBorder: const UnderlineInputBorder(
@@ -138,12 +163,10 @@ class _LogInPageState extends State<LogInPage> {
                   Align(
                     alignment: Alignment.center,
                     child: RoundedSmallbutton(
-                      onTap: () {
-                        //button onTap Funtion
-                      },
+                      onPressed: logInUser,
                       lable: 'Login',
                       backgroundColor: PaletteLightMode.secondaryGreenColor,
-                      textColor: PaletteLightMode.secondaryGreenColor,
+                      textColor: PaletteLightMode.whiteColor,
                       fontsize: 14,
                     ),
                   ),

@@ -1,7 +1,13 @@
 import 'package:calendar_view/calendar_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scholarsync/features/view/login_page.dart';
+import 'package:scholarsync/models/user.dart';
 import 'package:scholarsync/theme/app_theme.dart';
+import 'package:scholarsync/theme/palette.dart';
+import 'package:scholarsync/utils/user_repository.dart';
 import 'common/bottom_nav_bar.dart';
 import 'features/view/calendar_page.dart';
 import 'features/view/home_page.dart';
@@ -9,10 +15,24 @@ import 'features/view/kuppi_page.dart';
 import 'features/view/my_profile_page.dart';
 import 'features/view/notifications_page.dart';
 
+final userStreamProvider = StreamProvider.autoDispose<UserRepo>((ref) {
+  final userRepository = ref.watch(userRepositoryProvider);
+  final auth = FirebaseAuth.instance;
+
+  // Assuming you're using Firebase Auth and the user is authenticated
+  final userId = auth.currentUser?.uid;
+
+  if (userId != null) {
+    return userRepository.userDataStream(userId);
+  } else {
+    throw Exception("User not authenticated");
+  }
+});
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MainApp());
+  runApp( const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatefulWidget {
@@ -39,15 +59,36 @@ class _MainAppState extends State<MainApp> {
       child: MaterialApp(
         theme: AppThemeLight.theme,
         debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: _getPage(_selectedPageIndex),
-          bottomNavigationBar: BottomNavBar(
-            initialIndex: _selectedPageIndex,
-            onItemSelected: _onNavBarItemSelected,
-            navigateToPage: (context, page) {
-              _onNavBarItemSelected(_getPageNumber(page));
-            },
-          ),
+        home: StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.active) {
+              if (snapshot.hasData) {
+                return Scaffold(
+                  body: _getPage(_selectedPageIndex),
+                  bottomNavigationBar: BottomNavBar(
+                    initialIndex: _selectedPageIndex,
+                    onItemSelected: _onNavBarItemSelected,
+                    navigateToPage: (context, page) {
+                      _onNavBarItemSelected(_getPageNumber(page));
+                    },
+                  ),
+                );
+              }
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text('${snapshot.error}'),
+                );
+              }
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: PaletteLightMode.primaryGreenColor,
+                ),
+              );
+            }
+            return const LogInPage();
+          },
         ),
       ),
     );
