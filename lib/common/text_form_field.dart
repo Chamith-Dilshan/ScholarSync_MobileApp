@@ -63,7 +63,8 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
                 : TextInputType.text,
             maxLines: widget.isMultiline ? 10 : 1,
             controller: widget.controller,
-            initialValue: widget.initialValue,
+            initialValue:
+                widget.controller != null ? null : widget.initialValue,
             validator: (value) {
               setState(() {
                 _hasError = widget.validator?.call(value) != null;

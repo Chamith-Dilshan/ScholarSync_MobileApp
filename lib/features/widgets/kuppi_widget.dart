@@ -75,12 +75,12 @@ class _ImageWithTextWidgetState extends State<ImageWithTextWidget> {
                             child: PopupMenuButton<String>(
                               itemBuilder: (context) => [
                                 const PopupMenuItem(
-                                  value: 'option1',
-                                  child: Text('Option 1'),
+                                  value: 'edit',
+                                  child: Text('Edit'),
                                 ),
                                 const PopupMenuItem(
-                                  value: 'option2',
-                                  child: Text('Option 2'),
+                                  value: 'delete',
+                                  child: Text('Delete'),
                                 ),
                                 // Add more options as needed
                               ],
