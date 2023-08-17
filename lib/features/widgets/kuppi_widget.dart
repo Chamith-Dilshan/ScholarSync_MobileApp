@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:scholarsync/theme/palette.dart';
 
+import '../../utils/kuppi_repository.dart';
+
+final KuppiRepository _kuppiRepository = KuppiRepository();
+
 class ImageWithTextWidget extends StatefulWidget {
+  final String id;
   final String title;
   final String subtitle;
   final String imagePath;
   final String date;
+  final VoidCallback onDelete;
 
   const ImageWithTextWidget({
     Key? key,
+    required this.id,
     required this.title,
     required this.subtitle,
     required this.imagePath,
     required this.date,
+    required this.onDelete,
   }) : super(key: key);
 
   @override
@@ -22,6 +30,11 @@ class ImageWithTextWidget extends StatefulWidget {
 
 class _ImageWithTextWidgetState extends State<ImageWithTextWidget> {
   bool isFavorite = false;
+
+  void _handleDelete() async {
+    await _kuppiRepository.deleteKuppiSession(widget.id);
+    widget.onDelete();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,9 +91,10 @@ class _ImageWithTextWidgetState extends State<ImageWithTextWidget> {
                                   value: 'edit',
                                   child: Text('Edit'),
                                 ),
-                                const PopupMenuItem(
+                                PopupMenuItem(
                                   value: 'delete',
-                                  child: Text('Delete'),
+                                  onTap: _handleDelete,
+                                  child: const Text('Delete'),
                                 ),
                                 // Add more options as needed
                               ],

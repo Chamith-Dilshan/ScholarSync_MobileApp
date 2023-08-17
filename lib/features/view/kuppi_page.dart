@@ -29,15 +29,6 @@ class _KuppiPageState extends State<KuppiPage> {
   final _conductorController = TextEditingController();
   final _linkController = TextEditingController();
 
-  // Future addKuppiSession() async {
-  //   await FirebaseFirestore.instance.collection('kuppis').add({
-  //     'date': _dateController.text.trim(),
-  //     'name': _nameController.text.trim(),
-  //     'conductor': _conductorController.text.trim(),
-  //     'link': _linkController.text.trim(),
-  //   });
-  // }
-
   Future<void> createNewKuppiSession() async {
     KuppiSession kuppiSession = KuppiSession(
       id: '',
@@ -48,6 +39,7 @@ class _KuppiPageState extends State<KuppiPage> {
     );
 
     await _kuppiRepository.createKuppiSession(kuppiSession);
+    setState(() {});
   }
 
   @override
@@ -92,24 +84,37 @@ class _KuppiPageState extends State<KuppiPage> {
             ),
             const SizedBox(height: 18),
             Expanded(
-              child: ListView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
-                children: const [
-                  ImageWithTextWidget(
-                    title: 'MICROPYTHON',
-                    subtitle: 'by ATD Gamage',
-                    date: '30th July, 2023',
-                    imagePath: ImageConstants.kuppi1,
-                  ),
-                  SizedBox(height: 20),
-                  ImageWithTextWidget(
-                    title: 'Mathematics for Computing',
-                    subtitle: 'by ATD Gamage',
-                    date: '30th July, 2023',
-                    imagePath: ImageConstants.kuppi1,
-                  ),
-                ],
+              child: FutureBuilder<List<KuppiSession>>(
+                future: _kuppiRepository.getKuppiSessions(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return const Text('Error fetching Kuppi sessions');
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Text('No Kuppi sessions available');
+                  } else {
+                    return ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.only(
+                          bottom: 20, left: 20, right: 20),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        KuppiSession session = snapshot.data![index];
+                        return ImageWithTextWidget(
+                          id: session.id,
+                          title: session.name,
+                          subtitle: 'by ${session.conductor}',
+                          date: session.date,
+                          imagePath: ImageConstants.kuppi1,
+                          onDelete: () {
+                            setState(() {});
+                          },
+                        );
+                      },
+                    );
+                  }
+                },
               ),
             ),
           ],

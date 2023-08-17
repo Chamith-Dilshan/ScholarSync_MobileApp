@@ -83,8 +83,7 @@ class _ReusableFormDialogState extends State<ReusableFormDialog> {
                     if (widget.onSubmit != null) {
                       widget.onSubmit!(_formData);
                     }
-
-                    Navigator.pop(context);
+                    Navigator.of(context).pop();
                   }
                 },
                 backgroundColor: PaletteLightMode.secondaryGreenColor,

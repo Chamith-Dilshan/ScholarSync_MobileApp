@@ -37,9 +37,9 @@ class KuppiRepository {
     }
   }
 
-  Future<void> deleteKuppiSession(String sessionId) async {
+  Future<void> deleteKuppiSession(String id) async {
     try {
-      await _firestore.collection('kuppiSessions').doc(sessionId).delete();
+      await _firestore.collection('kuppiSessions').doc(id).delete();
     } catch (error) {
       // print("Error deleting kuppi session: $error");
     }
