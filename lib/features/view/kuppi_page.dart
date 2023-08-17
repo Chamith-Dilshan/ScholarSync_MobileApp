@@ -10,9 +10,54 @@ import 'package:scholarsync/features/widgets/kuppi_widget.dart';
 import 'package:scholarsync/constants/image_constants.dart';
 import 'package:scholarsync/common/reusable_form_dialog.dart';
 import 'package:scholarsync/theme/palette.dart';
+import 'package:scholarsync/utils/kuppi_repository.dart';
 
-class KuppiPage extends StatelessWidget {
+import '../../models/kuppi.dart';
+
+final KuppiRepository _kuppiRepository = KuppiRepository();
+
+class KuppiPage extends StatefulWidget {
   const KuppiPage({super.key});
+
+  @override
+  State<KuppiPage> createState() => _KuppiPageState();
+}
+
+class _KuppiPageState extends State<KuppiPage> {
+  final _nameController = TextEditingController();
+  final _dateController = TextEditingController();
+  final _conductorController = TextEditingController();
+  final _linkController = TextEditingController();
+
+  // Future addKuppiSession() async {
+  //   await FirebaseFirestore.instance.collection('kuppis').add({
+  //     'date': _dateController.text.trim(),
+  //     'name': _nameController.text.trim(),
+  //     'conductor': _conductorController.text.trim(),
+  //     'link': _linkController.text.trim(),
+  //   });
+  // }
+
+  Future<void> createNewKuppiSession() async {
+    KuppiSession kuppiSession = KuppiSession(
+      id: '',
+      name: _nameController.text.trim(),
+      date: _dateController.text.trim(),
+      conductor: _conductorController.text.trim(),
+      link: _linkController.text.trim(),
+    );
+
+    await _kuppiRepository.createKuppiSession(kuppiSession);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _dateController.dispose();
+    _conductorController.dispose();
+    _linkController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,95 +131,101 @@ class KuppiPage extends StatelessWidget {
           ),
         ));
   }
-}
 
-void _showFormDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return ReusableFormDialog(
-        title: 'Add New Kuppi Session',
-        buttonLabel: 'Add',
-        formFields: [
-          const SizedBox(height: 5),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  color: PaletteLightMode.whiteColor,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: PaletteLightMode.shadowColor,
-                      offset: Offset(8, 8),
-                      blurRadius: 24,
-                      spreadRadius: 0,
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    color: PaletteLightMode.secondaryTextColor,
-                    shape: BoxShape.circle,
+  void _showFormDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ReusableFormDialog(
+          title: 'Add New Kuppi Session',
+          buttonLabel: 'Add',
+          formFields: [
+            const SizedBox(height: 5),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: PaletteLightMode.whiteColor,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: PaletteLightMode.shadowColor,
+                        offset: Offset(8, 8),
+                        blurRadius: 24,
+                        spreadRadius: 0,
+                      )
+                    ],
                   ),
-                  child: ButtonIcon(
-                    icon: IconConstants.cameraIcon,
-                    iconColor: PaletteLightMode.whiteColor,
-                    size: 20,
-                    onTap: () {},
-                  )),
-            ],
-          ),
-          const SizedBox(height: 15),
-          ReusableTextField(
-            labelText: 'Name',
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a name';
-              }
-              return null;
-            },
-            onSaved: (value) {},
-          ),
-          ReusableTextField(
-            labelText: 'Date',
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a name';
-              }
-              return null;
-            },
-            onSaved: (value) {},
-          ),
-          ReusableTextField(
-            labelText: 'Conducted by',
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter the name of the conductor';
-              }
-              return null;
-            },
-            onSaved: (value) {},
-          ),
-          ReusableTextField(
-            labelText: 'Link to join',
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter the link to join';
-              }
-              return null;
-            },
-            onSaved: (value) {},
-          ),
-        ],
-        onSubmit: (formData) {},
-      );
-    },
-  );
+                ),
+                Container(
+                    width: 40,
+                    height: 40,
+                    decoration: const BoxDecoration(
+                      color: PaletteLightMode.secondaryTextColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: ButtonIcon(
+                      icon: IconConstants.cameraIcon,
+                      iconColor: PaletteLightMode.whiteColor,
+                      size: 20,
+                      onTap: () {},
+                    )),
+              ],
+            ),
+            const SizedBox(height: 15),
+            ReusableTextField(
+              controller: _nameController,
+              labelText: 'Name',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a name';
+                }
+                return null;
+              },
+              onSaved: (value) {},
+            ),
+            ReusableTextField(
+              controller: _dateController,
+              labelText: 'Date',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a name';
+                }
+                return null;
+              },
+              onSaved: (value) {},
+            ),
+            ReusableTextField(
+              controller: _conductorController,
+              labelText: 'Conducted by',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the name of the conductor';
+                }
+                return null;
+              },
+              onSaved: (value) {},
+            ),
+            ReusableTextField(
+              controller: _linkController,
+              labelText: 'Link to join',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the link to join';
+                }
+                return null;
+              },
+              onSaved: (value) {},
+            ),
+          ],
+          onSubmit: (formData) async {
+            await createNewKuppiSession();
+          },
+        );
+      },
+    );
+  }
 }
