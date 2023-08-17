@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:scholarsync/common/button_icon.dart';
 import 'package:scholarsync/common/search_bar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
@@ -13,6 +16,7 @@ import 'package:scholarsync/theme/palette.dart';
 import 'package:scholarsync/utils/kuppi_repository.dart';
 
 import '../../models/kuppi.dart';
+import '../../utils/utils.dart';
 
 final KuppiRepository _kuppiRepository = KuppiRepository();
 
@@ -24,6 +28,8 @@ class KuppiPage extends StatefulWidget {
 }
 
 class _KuppiPageState extends State<KuppiPage> {
+  Uint8List? _selectedImageBytes;
+
   final _nameController = TextEditingController();
   final _dateController = TextEditingController();
   final _conductorController = TextEditingController();
@@ -137,7 +143,8 @@ class _KuppiPageState extends State<KuppiPage> {
         ));
   }
 
-  void _showFormDialog(BuildContext context) {
+  void _showFormDialog(BuildContext context) async {
+    // ignore: use_build_context_synchronously
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -146,39 +153,10 @@ class _KuppiPageState extends State<KuppiPage> {
           buttonLabel: 'Add',
           formFields: [
             const SizedBox(height: 5),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: PaletteLightMode.whiteColor,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: PaletteLightMode.shadowColor,
-                        offset: Offset(8, 8),
-                        blurRadius: 24,
-                        spreadRadius: 0,
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      color: PaletteLightMode.secondaryTextColor,
-                      shape: BoxShape.circle,
-                    ),
-                    child: ButtonIcon(
-                      icon: IconConstants.cameraIcon,
-                      iconColor: PaletteLightMode.whiteColor,
-                      size: 20,
-                      onTap: () {},
-                    )),
-              ],
+            StatefulBuilder(
+              builder: (context, setState) {
+                return _buildImagePicker(setState);
+              },
             ),
             const SizedBox(height: 15),
             ReusableTextField(
@@ -231,6 +209,76 @@ class _KuppiPageState extends State<KuppiPage> {
           },
         );
       },
+    );
+  }
+
+  bool _isImageSelected = false;
+
+  Widget _buildImagePicker(StateSetter setState) {
+    return GestureDetector(
+      onTap: () async {
+        if (_isImageSelected) {
+          final selectedImageBytes = await pickImage(ImageSource.gallery);
+
+          if (selectedImageBytes != null) {
+            setState(() {
+              _selectedImageBytes = selectedImageBytes;
+            });
+          }
+        } else {
+          final selectedImageBytes = await pickImage(ImageSource.gallery);
+
+          if (selectedImageBytes != null) {
+            setState(() {
+              _selectedImageBytes = selectedImageBytes;
+              _isImageSelected = true;
+            });
+          }
+        }
+      },
+      child: Container(
+        width: 150,
+        height: 150,
+        decoration: BoxDecoration(
+          color: PaletteLightMode.whiteColor,
+          borderRadius: BorderRadius.circular(10), // Added border radius
+          boxShadow: const [
+            BoxShadow(
+              color: PaletteLightMode.shadowColor,
+              offset: Offset(8, 8),
+              blurRadius: 24,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: _isImageSelected
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: _selectedImageBytes != null
+                    ? Image.memory(
+                        _selectedImageBytes!,
+                        width: 150,
+                        height: 150,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(), // Display nothing if no image is selected
+              )
+            : Center(
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: const BoxDecoration(
+                    color: PaletteLightMode.secondaryTextColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const ButtonIcon(
+                    icon: IconConstants.cameraIcon,
+                    iconColor: PaletteLightMode.whiteColor,
+                    size: 20,
+                  ),
+                ),
+              ),
+      ),
     );
   }
 }
