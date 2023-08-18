@@ -67,73 +67,59 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
         ),
         SizedBox(
           height: _calculateHeight(),
-          child: TextFormField(
-            keyboardType: widget.isMultiline
-                ? TextInputType.multiline
-                : TextInputType.text,
-            maxLines: widget.isMultiline ? 10 : 1,
-            controller: widget.controller,
-            initialValue:
-                widget.controller != null ? null : widget.initialValue,
-            validator: (value) {
-              setState(() {
-                _hasError = widget.validator?.call(value) != null;
-              });
-              return widget.validator?.call(value);
+          child: GestureDetector(
+            onTap: () {
+              if (widget.isDateField) {
+                _showDatePicker();
+              }
             },
-            onSaved: widget.onSaved,
-            obscureText: widget.obscureText,
-            cursorColor: widget.cursorColor,
-            style: const TextStyle(
-              fontSize: 14,
-            ),
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(widget.borderRadius),
-                borderSide: BorderSide(
-                  width: 1,
-                  color: widget.borderColor,
+            child: AbsorbPointer(
+              absorbing: widget.isDateField,
+              child: TextFormField(
+                keyboardType: widget.isMultiline
+                    ? TextInputType.multiline
+                    : TextInputType.text,
+                maxLines: widget.isMultiline ? 10 : 1,
+                controller: widget.controller,
+                initialValue:
+                    widget.controller != null ? null : widget.initialValue,
+                validator: (value) {
+                  setState(() {
+                    _hasError = widget.validator?.call(value) != null;
+                  });
+                  return widget.validator?.call(value);
+                },
+                onSaved: widget.onSaved,
+                obscureText: widget.obscureText,
+                cursorColor: widget.cursorColor,
+                style: const TextStyle(
+                  fontSize: 14,
+                ),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(widget.borderRadius),
+                    borderSide: BorderSide(
+                      width: 1,
+                      color: widget.borderColor,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(widget.borderRadius),
+                    borderSide: BorderSide(
+                      width: 1,
+                      color: widget.focusedBorderColor,
+                    ),
+                  ),
+                  isDense: widget.isDense,
+                  contentPadding: const EdgeInsets.all(8),
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  errorMaxLines: null,
+                  suffixIcon: widget.isDateField
+                      ? const Icon(Icons.calendar_today,
+                          size: 18, color: PaletteLightMode.secondaryTextColor)
+                      : null,
                 ),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(widget.borderRadius),
-                borderSide: BorderSide(
-                  width: 1,
-                  color: widget.focusedBorderColor,
-                ),
-              ),
-              isDense: widget.isDense,
-              contentPadding: const EdgeInsets.all(8),
-              floatingLabelBehavior: FloatingLabelBehavior.never,
-              errorMaxLines: null,
-              suffixIcon: widget.isDateField // Add this condition
-                  ? IconButton(
-                      onPressed: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: widget.controller != null
-                              ? widget.controller!.text.isNotEmpty
-                                  ? DateTime.parse(widget.controller!.text)
-                                  : DateTime.now()
-                              : _selectedDate,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2030),
-                        );
-                        if (pickedDate != null) {
-                          setState(() {
-                            _selectedDate = pickedDate;
-                            if (widget.controller != null) {
-                              widget.controller!.text = DateFormat('yyyy-MM-dd')
-                                  .format(pickedDate)
-                                  .toString();
-                            }
-                          });
-                        }
-                      },
-                      icon: const Icon(Icons.calendar_today),
-                      iconSize: 18,
-                    )
-                  : null, // Set suffixIcon to null if isDateField is false
             ),
           ),
         ),
@@ -153,6 +139,28 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
       return 100.0;
     } else {
       return 30.0;
+    }
+  }
+
+  void _showDatePicker() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: widget.controller != null
+          ? widget.controller!.text.isNotEmpty
+              ? DateTime.parse(widget.controller!.text)
+              : DateTime.now()
+          : _selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2025),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;
+        if (widget.controller != null) {
+          widget.controller!.text =
+              DateFormat('yyyy-MM-dd').format(pickedDate).toString();
+        }
+      });
     }
   }
 }

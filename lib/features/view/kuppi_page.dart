@@ -29,7 +29,6 @@ class _KuppiPageState extends State<KuppiPage> {
   File? _selectedImage;
   bool _isImageSelected = false;
   String? downloadURL;
-  DateTime _selectedDate = DateTime.now();
 
   final _nameController = TextEditingController();
   final _dateController = TextEditingController();
@@ -74,7 +73,22 @@ class _KuppiPageState extends State<KuppiPage> {
         FirebaseStorage.instance.ref().child('kuppi_images/$imageName');
     await ref.putFile(_selectedImage!);
     downloadURL = await ref.getDownloadURL();
-    print(downloadURL);
+  }
+
+  String formatDate(DateTime date) {
+    String day = DateFormat('d').format(date);
+    String month = DateFormat('MMMM').format(date);
+    String year = DateFormat('y').format(date);
+
+    String daySuffix = day.endsWith('1')
+        ? 'st'
+        : day.endsWith('2')
+            ? 'nd'
+            : day.endsWith('3')
+                ? 'rd'
+                : 'th';
+
+    return '$day$daySuffix $month $year';
   }
 
   @override
@@ -135,18 +149,17 @@ class _KuppiPageState extends State<KuppiPage> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                      child:
-                          CircularProgressIndicator(), // Display a loading indicator
+                      child: CircularProgressIndicator(
+                        color: PaletteLightMode.secondaryGreenColor,
+                      ),
                     );
                   } else if (snapshot.hasError) {
                     return const Center(
-                      child: Text(
-                          'Error fetching Kuppi sessions'), // Display an error message
+                      child: Text('Error fetching Kuppi sessions'),
                     );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(
-                      child: Text(
-                          'No Kuppi sessions available'), // Display a message for no data
+                      child: Text('No Kuppi sessions available'),
                     );
                   } else {
                     return ListView.builder(
@@ -160,7 +173,7 @@ class _KuppiPageState extends State<KuppiPage> {
                           id: session.id,
                           title: session.name.toUpperCase(),
                           subtitle: 'by ${session.conductor}',
-                          date: DateFormat('yyyy-MM-dd').format(session.date),
+                          date: formatDate(session.date),
                           imageUrl: session.imageUrl,
                           onDelete: () {
                             setState(() {});
@@ -263,10 +276,6 @@ class _KuppiPageState extends State<KuppiPage> {
           onSubmit: (formData) async {
             if (_isImageSelected) {
               await createNewKuppiSession();
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Please select an image.')),
-              );
             }
           },
           onPop: () {
