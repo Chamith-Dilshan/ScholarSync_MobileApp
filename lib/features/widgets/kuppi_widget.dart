@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:scholarsync/theme/palette.dart';
 
@@ -9,7 +10,7 @@ class ImageWithTextWidget extends StatefulWidget {
   final String id;
   final String title;
   final String subtitle;
-  final String imagePath;
+  final String imageUrl;
   final String date;
   final VoidCallback onDelete;
 
@@ -18,7 +19,7 @@ class ImageWithTextWidget extends StatefulWidget {
     required this.id,
     required this.title,
     required this.subtitle,
-    required this.imagePath,
+    required this.imageUrl,
     required this.date,
     required this.onDelete,
   }) : super(key: key);
@@ -33,6 +34,8 @@ class _ImageWithTextWidgetState extends State<ImageWithTextWidget> {
 
   void _handleDelete() async {
     await _kuppiRepository.deleteKuppiSession(widget.id);
+    var imageRef = FirebaseStorage.instance.refFromURL(widget.imageUrl);
+    await imageRef.delete();
     widget.onDelete();
   }
 
@@ -54,11 +57,17 @@ class _ImageWithTextWidgetState extends State<ImageWithTextWidget> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(
-            widget.imagePath,
-            width: 160,
-            height: 160,
-            fit: BoxFit.cover,
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(10),
+              bottomLeft: Radius.circular(10),
+            ),
+            child: Image.network(
+              widget.imageUrl,
+              width: 160,
+              height: 160,
+              fit: BoxFit.cover,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(

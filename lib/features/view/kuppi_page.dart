@@ -1,5 +1,5 @@
-import 'dart:typed_data';
-
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,13 +10,10 @@ import 'package:scholarsync/features/view/home_page.dart';
 import 'package:scholarsync/common/text_form_field.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
 import 'package:scholarsync/features/widgets/kuppi_widget.dart';
-import 'package:scholarsync/constants/image_constants.dart';
 import 'package:scholarsync/common/reusable_form_dialog.dart';
 import 'package:scholarsync/theme/palette.dart';
 import 'package:scholarsync/utils/kuppi_repository.dart';
-
 import '../../models/kuppi.dart';
-import '../../utils/utils.dart';
 
 final KuppiRepository _kuppiRepository = KuppiRepository();
 
@@ -28,24 +25,54 @@ class KuppiPage extends StatefulWidget {
 }
 
 class _KuppiPageState extends State<KuppiPage> {
-  Uint8List? _selectedImageBytes;
+  File? _selectedImage;
+  bool _isImageSelected = false;
+  String? downloadURL;
 
   final _nameController = TextEditingController();
   final _dateController = TextEditingController();
   final _conductorController = TextEditingController();
   final _linkController = TextEditingController();
 
-  Future<void> createNewKuppiSession() async {
-    KuppiSession kuppiSession = KuppiSession(
-      id: '',
-      name: _nameController.text.trim(),
-      date: _dateController.text.trim(),
-      conductor: _conductorController.text.trim(),
-      link: _linkController.text.trim(),
-    );
+  Future<void> imagePicker(StateSetter setState) async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
 
-    await _kuppiRepository.createKuppiSession(kuppiSession);
-    setState(() {});
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+        _isImageSelected = true;
+      });
+    }
+  }
+
+  Future<void> createNewKuppiSession() async {
+    try {
+      await uploadImage();
+
+      KuppiSession kuppiSession = KuppiSession(
+        id: '',
+        name: _nameController.text.trim(),
+        date: _dateController.text.trim(),
+        conductor: _conductorController.text.trim(),
+        link: _linkController.text.trim(),
+        imageUrl: downloadURL!,
+      );
+
+      await _kuppiRepository.createKuppiSession(kuppiSession);
+      setState(() {});
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future uploadImage() async {
+    String imageName = _selectedImage!.path.split('/').last;
+    Reference ref =
+        FirebaseStorage.instance.ref().child('kuppi_images/$imageName');
+    await ref.putFile(_selectedImage!);
+    downloadURL = await ref.getDownloadURL();
+    print(downloadURL);
   }
 
   @override
@@ -55,6 +82,17 @@ class _KuppiPageState extends State<KuppiPage> {
     _conductorController.dispose();
     _linkController.dispose();
     super.dispose();
+  }
+
+  void _resetFormFields() {
+    setState(() {
+      _nameController.clear();
+      _dateController.clear();
+      _conductorController.clear();
+      _linkController.clear();
+      _selectedImage = null;
+      _isImageSelected = false;
+    });
   }
 
   @override
@@ -94,11 +132,20 @@ class _KuppiPageState extends State<KuppiPage> {
                 future: _kuppiRepository.getKuppiSessions(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
+                    return const Center(
+                      child:
+                          CircularProgressIndicator(), // Display a loading indicator
+                    );
                   } else if (snapshot.hasError) {
-                    return const Text('Error fetching Kuppi sessions');
+                    return const Center(
+                      child: Text(
+                          'Error fetching Kuppi sessions'), // Display an error message
+                    );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Text('No Kuppi sessions available');
+                    return const Center(
+                      child: Text(
+                          'No Kuppi sessions available'), // Display a message for no data
+                    );
                   } else {
                     return ListView.builder(
                       physics: const BouncingScrollPhysics(),
@@ -112,7 +159,7 @@ class _KuppiPageState extends State<KuppiPage> {
                           title: session.name,
                           subtitle: 'by ${session.conductor}',
                           date: session.date,
-                          imagePath: ImageConstants.kuppi1,
+                          imageUrl: session.imageUrl,
                           onDelete: () {
                             setState(() {});
                           },
@@ -144,7 +191,8 @@ class _KuppiPageState extends State<KuppiPage> {
   }
 
   void _showFormDialog(BuildContext context) async {
-    // ignore: use_build_context_synchronously
+    _resetFormFields();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -205,43 +253,35 @@ class _KuppiPageState extends State<KuppiPage> {
             ),
           ],
           onSubmit: (formData) async {
-            await createNewKuppiSession();
+            if (_isImageSelected) {
+              await createNewKuppiSession();
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Please select an image.')),
+              );
+            }
+          },
+          onPop: () {
+            setState(() {
+              _selectedImage = null;
+            });
           },
         );
       },
     );
   }
 
-  bool _isImageSelected = false;
-
   Widget _buildImagePicker(StateSetter setState) {
     return GestureDetector(
       onTap: () async {
-        if (_isImageSelected) {
-          final selectedImageBytes = await pickImage(ImageSource.gallery);
-
-          if (selectedImageBytes != null) {
-            setState(() {
-              _selectedImageBytes = selectedImageBytes;
-            });
-          }
-        } else {
-          final selectedImageBytes = await pickImage(ImageSource.gallery);
-
-          if (selectedImageBytes != null) {
-            setState(() {
-              _selectedImageBytes = selectedImageBytes;
-              _isImageSelected = true;
-            });
-          }
-        }
+        await imagePicker(setState);
       },
       child: Container(
         width: 150,
         height: 150,
         decoration: BoxDecoration(
           color: PaletteLightMode.whiteColor,
-          borderRadius: BorderRadius.circular(10), // Added border radius
+          borderRadius: BorderRadius.circular(10),
           boxShadow: const [
             BoxShadow(
               color: PaletteLightMode.shadowColor,
@@ -254,14 +294,14 @@ class _KuppiPageState extends State<KuppiPage> {
         child: _isImageSelected
             ? ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: _selectedImageBytes != null
-                    ? Image.memory(
-                        _selectedImageBytes!,
+                child: _selectedImage != null
+                    ? Image.file(
+                        _selectedImage!,
                         width: 150,
                         height: 150,
                         fit: BoxFit.cover,
                       )
-                    : Container(), // Display nothing if no image is selected
+                    : Container(),
               )
             : Center(
                 child: Container(

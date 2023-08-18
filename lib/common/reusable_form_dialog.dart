@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/common/custom_elevated_button.dart';
@@ -12,7 +10,7 @@ class ReusableFormDialog extends StatefulWidget {
   final List<Widget> formFields;
   final void Function(Map<String, String> formData)? onSubmit;
   final String buttonLabel;
-  final void Function(Uint8List?)? updateImageBytes;
+  final void Function()? onPop;
 
   const ReusableFormDialog({
     Key? key,
@@ -20,7 +18,7 @@ class ReusableFormDialog extends StatefulWidget {
     required this.buttonLabel,
     required this.formFields,
     this.onSubmit,
-    this.updateImageBytes,
+    this.onPop,
   }) : super(key: key);
 
   @override
@@ -87,6 +85,7 @@ class _ReusableFormDialogState extends State<ReusableFormDialog> {
                     if (widget.onSubmit != null) {
                       widget.onSubmit!(_formData);
                     }
+
                     Navigator.of(context).pop();
                   }
                 },
