@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:scholarsync/theme/palette.dart';
 
 class ReusableTextField extends StatefulWidget {
@@ -13,6 +14,7 @@ class ReusableTextField extends StatefulWidget {
   final double borderRadius;
   final bool isDense;
   final bool isMultiline;
+  final bool isDateField;
 
   final TextEditingController? controller;
 
@@ -30,6 +32,7 @@ class ReusableTextField extends StatefulWidget {
     this.isDense = false,
     this.controller,
     this.isMultiline = false,
+    this.isDateField = false,
   }) : super(key: key);
 
   @override
@@ -38,6 +41,13 @@ class ReusableTextField extends StatefulWidget {
 
 class _ReusableTextFieldState extends State<ReusableTextField> {
   bool _hasError = false;
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = DateTime.now();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +106,34 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
               contentPadding: const EdgeInsets.all(8),
               floatingLabelBehavior: FloatingLabelBehavior.never,
               errorMaxLines: null,
+              suffixIcon: widget.isDateField // Add this condition
+                  ? IconButton(
+                      onPressed: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: widget.controller != null
+                              ? widget.controller!.text.isNotEmpty
+                                  ? DateTime.parse(widget.controller!.text)
+                                  : DateTime.now()
+                              : _selectedDate,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2030),
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            _selectedDate = pickedDate;
+                            if (widget.controller != null) {
+                              widget.controller!.text = DateFormat('yyyy-MM-dd')
+                                  .format(pickedDate)
+                                  .toString();
+                            }
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.calendar_today),
+                      iconSize: 18,
+                    )
+                  : null, // Set suffixIcon to null if isDateField is false
             ),
           ),
         ),

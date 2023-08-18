@@ -1,9 +1,8 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class KuppiSession {
   final String id;
-  final String date;
+  final DateTime date;
   final String name;
   final String conductor;
   final String link;
@@ -23,7 +22,7 @@ class KuppiSession {
 
     return KuppiSession(
       id: snapshot.id,
-      date: snapshotData['date'] as String,
+      date: (snapshotData['date'] as Timestamp).toDate(),
       name: snapshotData['name'] as String,
       conductor: snapshotData['conductor'] as String,
       link: snapshotData['link'] as String,

@@ -3,6 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:scholarsync/common/button_icon.dart';
 import 'package:scholarsync/common/search_bar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
@@ -28,6 +29,7 @@ class _KuppiPageState extends State<KuppiPage> {
   File? _selectedImage;
   bool _isImageSelected = false;
   String? downloadURL;
+  DateTime _selectedDate = DateTime.now();
 
   final _nameController = TextEditingController();
   final _dateController = TextEditingController();
@@ -53,7 +55,7 @@ class _KuppiPageState extends State<KuppiPage> {
       KuppiSession kuppiSession = KuppiSession(
         id: '',
         name: _nameController.text.trim(),
-        date: _dateController.text.trim(),
+        date: DateTime.parse(_dateController.text.trim()),
         conductor: _conductorController.text.trim(),
         link: _linkController.text.trim(),
         imageUrl: downloadURL!,
@@ -156,9 +158,9 @@ class _KuppiPageState extends State<KuppiPage> {
                         KuppiSession session = snapshot.data![index];
                         return ImageWithTextWidget(
                           id: session.id,
-                          title: session.name,
+                          title: session.name.toUpperCase(),
                           subtitle: 'by ${session.conductor}',
-                          date: session.date,
+                          date: DateFormat('yyyy-MM-dd').format(session.date),
                           imageUrl: session.imageUrl,
                           onDelete: () {
                             setState(() {});
@@ -221,9 +223,10 @@ class _KuppiPageState extends State<KuppiPage> {
             ReusableTextField(
               controller: _dateController,
               labelText: 'Date',
+              isDateField: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter a name';
+                  return 'Please enter a date';
                 }
                 return null;
               },
@@ -246,6 +249,11 @@ class _KuppiPageState extends State<KuppiPage> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter the link to join';
+                }
+
+                final Uri uri = Uri.parse(value);
+                if (uri.scheme.isEmpty || uri.host.isEmpty) {
+                  return 'Please enter a valid URL';
                 }
                 return null;
               },
