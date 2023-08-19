@@ -207,7 +207,7 @@ class _KuppiPageState extends State<KuppiPage> {
             const SizedBox(height: 5),
             ImageFormField(
               validator: (selectedImage) {
-                if (selectedImage == null) {
+                if (_isImageSelected == false) {
                   return 'Please select an image';
                 }
                 return null;
@@ -272,8 +272,10 @@ class _KuppiPageState extends State<KuppiPage> {
             ),
           ],
           onSubmit: (formData) async {
+            print("Add button is clicked");
             if (_isImageSelected) {
               await createNewKuppiSession();
+              print("Kuppi session created");
             }
           },
           onPop: () {

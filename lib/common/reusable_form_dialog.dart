@@ -70,7 +70,6 @@ class _ReusableFormDialogState extends State<ReusableFormDialog> {
       content: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Form(
-          autovalidateMode: AutovalidateMode.always,
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,

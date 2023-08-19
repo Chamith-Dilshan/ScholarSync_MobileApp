@@ -111,7 +111,6 @@ class _ReusableTextFieldState extends State<ReusableTextField> {
                     ),
                   ),
                   isDense: widget.isDense,
-                  contentPadding: const EdgeInsets.all(8),
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   errorMaxLines: null,
                   suffixIcon: widget.isDateField

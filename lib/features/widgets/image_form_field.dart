@@ -21,7 +21,6 @@ class ImageFormField extends StatefulWidget {
 class _ImageFormFieldState extends State<ImageFormField> {
   File? _selectedImage;
   bool _isImageSelected = false;
-  bool _hasError = false;
 
   Future<void> imagePicker() async {
     final pickedImage =
@@ -41,9 +40,6 @@ class _ImageFormFieldState extends State<ImageFormField> {
   Widget build(BuildContext context) {
     return FormField<File?>(
       validator: (value) {
-        setState(() {
-          _hasError = widget.validator.call(value) != null;
-        });
         return widget.validator.call(value);
       },
       builder: (state) {
@@ -96,7 +92,7 @@ class _ImageFormFieldState extends State<ImageFormField> {
                         ),
                       ),
               ),
-              if (_hasError)
+              if (!_isImageSelected)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
