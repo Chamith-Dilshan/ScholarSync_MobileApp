@@ -15,6 +15,7 @@ import 'package:scholarsync/common/reusable_form_dialog.dart';
 import 'package:scholarsync/theme/palette.dart';
 import 'package:scholarsync/utils/kuppi_repository.dart';
 import '../../models/kuppi.dart';
+import '../widgets/image_form_field.dart';
 
 final KuppiRepository _kuppiRepository = KuppiRepository();
 
@@ -34,18 +35,6 @@ class _KuppiPageState extends State<KuppiPage> {
   final _dateController = TextEditingController();
   final _conductorController = TextEditingController();
   final _linkController = TextEditingController();
-
-  Future<void> imagePicker(StateSetter setState) async {
-    final pickedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    if (pickedImage != null) {
-      setState(() {
-        _selectedImage = File(pickedImage.path);
-        _isImageSelected = true;
-      });
-    }
-  }
 
   Future<void> createNewKuppiSession() async {
     try {
@@ -216,9 +205,18 @@ class _KuppiPageState extends State<KuppiPage> {
           buttonLabel: 'Add',
           formFields: [
             const SizedBox(height: 5),
-            StatefulBuilder(
-              builder: (context, setState) {
-                return _buildImagePicker(setState);
+            ImageFormField(
+              validator: (selectedImage) {
+                if (selectedImage == null) {
+                  return 'Please select an image';
+                }
+                return null;
+              },
+              onImageSelected: (selectedImage) {
+                setState(() {
+                  _selectedImage = selectedImage;
+                  _isImageSelected = true;
+                });
               },
             ),
             const SizedBox(height: 15),
@@ -285,57 +283,6 @@ class _KuppiPageState extends State<KuppiPage> {
           },
         );
       },
-    );
-  }
-
-  Widget _buildImagePicker(StateSetter setState) {
-    return GestureDetector(
-      onTap: () async {
-        await imagePicker(setState);
-      },
-      child: Container(
-        width: 150,
-        height: 150,
-        decoration: BoxDecoration(
-          color: PaletteLightMode.whiteColor,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-              color: PaletteLightMode.shadowColor,
-              offset: Offset(8, 8),
-              blurRadius: 24,
-              spreadRadius: 0,
-            ),
-          ],
-        ),
-        child: _isImageSelected
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: _selectedImage != null
-                    ? Image.file(
-                        _selectedImage!,
-                        width: 150,
-                        height: 150,
-                        fit: BoxFit.cover,
-                      )
-                    : Container(),
-              )
-            : Center(
-                child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: const BoxDecoration(
-                    color: PaletteLightMode.secondaryTextColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const ButtonIcon(
-                    icon: IconConstants.cameraIcon,
-                    iconColor: PaletteLightMode.whiteColor,
-                    size: 20,
-                  ),
-                ),
-              ),
-      ),
     );
   }
 }
