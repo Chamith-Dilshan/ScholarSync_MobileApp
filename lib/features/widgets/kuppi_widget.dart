@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scholarsync/theme/palette.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class KuppiWidget extends StatefulWidget {
   final String id;
@@ -131,8 +132,12 @@ class _KuppiWidgetState extends State<KuppiWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          // Add your join button logic here
+                        onPressed: () async {
+                          try {
+                            await launchUrl(Uri.parse(widget.link));
+                          } catch (e) {
+                            throw 'could not launch url';
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
