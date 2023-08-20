@@ -6,6 +6,7 @@ class KuppiWidget extends StatefulWidget {
   final String title;
   final String subtitle;
   final String imageUrl;
+  final String link;
   final String date;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
@@ -16,6 +17,7 @@ class KuppiWidget extends StatefulWidget {
     required this.title,
     required this.subtitle,
     required this.imageUrl,
+    required this.link,
     required this.date,
     required this.onDelete,
     required this.onEdit,
@@ -59,7 +61,7 @@ class _KuppiWidgetState extends State<KuppiWidget> {
               fit: BoxFit.cover,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,6 +128,7 @@ class _KuppiWidgetState extends State<KuppiWidget> {
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
                         onPressed: () {

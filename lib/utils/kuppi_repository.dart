@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scholarsync/models/kuppi.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class KuppiRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

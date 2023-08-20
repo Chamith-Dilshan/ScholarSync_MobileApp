@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:scholarsync/common/search_bar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
-import 'package:scholarsync/features/view/home_page.dart';
 import 'package:scholarsync/common/text_form_field.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
 import 'package:scholarsync/features/widgets/kuppi_widget.dart';
@@ -50,7 +49,7 @@ class _KuppiPageState extends State<KuppiPage> {
       await _kuppiRepository.createKuppiSession(kuppiSession);
       setState(() {});
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 
@@ -119,18 +118,8 @@ class _KuppiPageState extends State<KuppiPage> {
           frontIcon: IconConstants.leftArrowIcon,
           backIcon: IconConstants.hamburgerMenuIcon,
           frontIconToolTip: 'Back to login page',
-          onFrontIconButtonpressed: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (context) => const HomePage()),
-            // );
-          },
-          onBackIconButtonpressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
-            );
-          },
+          onFrontIconButtonpressed: () {},
+          onBackIconButtonpressed: () {},
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -170,10 +159,11 @@ class _KuppiPageState extends State<KuppiPage> {
                           padding: const EdgeInsets.only(bottom: 15),
                           child: KuppiWidget(
                             id: session.id,
-                            title: session.name.toUpperCase(),
+                            title: session.name,
                             subtitle: 'by ${session.conductor}',
                             date: formatDate(session.date),
                             imageUrl: session.imageUrl,
+                            link: session.link,
                             onDelete: () {
                               Future.delayed(Duration.zero).then((value) {
                                 _handleDelete(session);
@@ -235,7 +225,6 @@ class _KuppiPageState extends State<KuppiPage> {
           title: isEditing ? 'Edit Kuppi Session' : 'Add New Kuppi Session',
           buttonLabel: isEditing ? 'Save' : 'Add',
           formFields: [
-            const SizedBox(height: 5),
             ImageFormField(
               initialImageUrl: isEditing ? session.imageUrl : null,
               isEditing: isEditing,
@@ -252,13 +241,15 @@ class _KuppiPageState extends State<KuppiPage> {
                 });
               },
             ),
-            const SizedBox(height: 15),
             ReusableTextField(
               controller: _nameController,
               labelText: 'Name',
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a name';
+                }
+                if (value.length > 30) {
+                  return 'Name must not exceed 30 characters';
                 }
                 return null;
               },
@@ -281,7 +272,7 @@ class _KuppiPageState extends State<KuppiPage> {
               labelText: 'Conducted by',
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter the name of the conductor';
+                  return 'Please enter the conductor';
                 }
                 return null;
               },
