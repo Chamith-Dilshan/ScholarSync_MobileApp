@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class KuppiSession {
-  final String id;
-  final DateTime date;
-  final String name;
-  final String conductor;
-  final String link;
-  final String imageUrl;
+  String id;
+  DateTime date;
+  String name;
+  String conductor;
+  String link;
+  String imageUrl;
 
   KuppiSession({
     required this.id,

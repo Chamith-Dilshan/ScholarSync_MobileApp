@@ -8,11 +8,18 @@ import '../../constants/icon_constants.dart';
 import '../../theme/palette.dart';
 
 class ImageFormField extends StatefulWidget {
-  const ImageFormField(
-      {super.key, required this.onImageSelected, required this.validator});
-
   final Function(File) onImageSelected;
   final String? Function(File?) validator;
+  final bool isEditing;
+  final String? initialImageUrl;
+
+  const ImageFormField({
+    super.key,
+    required this.onImageSelected,
+    required this.validator,
+    this.isEditing = false,
+    this.initialImageUrl,
+  });
 
   @override
   State<ImageFormField> createState() => _ImageFormFieldState();
@@ -76,21 +83,31 @@ class _ImageFormFieldState extends State<ImageFormField> {
                               )
                             : Container(),
                       )
-                    : Center(
-                        child: Container(
-                          width: 60,
-                          height: 60,
-                          decoration: const BoxDecoration(
-                            color: PaletteLightMode.secondaryTextColor,
-                            shape: BoxShape.circle,
+                    : widget.isEditing
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              widget.initialImageUrl!,
+                              width: 150,
+                              height: 150,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Center(
+                            child: Container(
+                              width: 60,
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                color: PaletteLightMode.secondaryTextColor,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const ButtonIcon(
+                                icon: IconConstants.cameraIcon,
+                                iconColor: PaletteLightMode.whiteColor,
+                                size: 20,
+                              ),
+                            ),
                           ),
-                          child: const ButtonIcon(
-                            icon: IconConstants.cameraIcon,
-                            iconColor: PaletteLightMode.whiteColor,
-                            size: 20,
-                          ),
-                        ),
-                      ),
               ),
               if (!_isImageSelected)
                 Padding(

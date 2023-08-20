@@ -1,20 +1,16 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:scholarsync/theme/palette.dart';
 
-import '../../utils/kuppi_repository.dart';
-
-final KuppiRepository _kuppiRepository = KuppiRepository();
-
-class ImageWithTextWidget extends StatefulWidget {
+class KuppiWidget extends StatefulWidget {
   final String id;
   final String title;
   final String subtitle;
   final String imageUrl;
   final String date;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
-  const ImageWithTextWidget({
+  const KuppiWidget({
     Key? key,
     required this.id,
     required this.title,
@@ -22,22 +18,16 @@ class ImageWithTextWidget extends StatefulWidget {
     required this.imageUrl,
     required this.date,
     required this.onDelete,
+    required this.onEdit,
   }) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _ImageWithTextWidgetState createState() => _ImageWithTextWidgetState();
+  _KuppiWidgetState createState() => _KuppiWidgetState();
 }
 
-class _ImageWithTextWidgetState extends State<ImageWithTextWidget> {
+class _KuppiWidgetState extends State<KuppiWidget> {
   bool isFavorite = false;
-
-  void _handleDelete() async {
-    await _kuppiRepository.deleteKuppiSession(widget.id);
-    var imageRef = FirebaseStorage.instance.refFromURL(widget.imageUrl);
-    await imageRef.delete();
-    widget.onDelete();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,16 +86,16 @@ class _ImageWithTextWidgetState extends State<ImageWithTextWidget> {
                             angle: 1.5708, // 90 degrees in radians
                             child: PopupMenuButton<String>(
                               itemBuilder: (context) => [
-                                const PopupMenuItem(
+                                PopupMenuItem(
                                   value: 'edit',
-                                  child: Text('Edit'),
+                                  onTap: widget.onEdit,
+                                  child: const Text('Edit'),
                                 ),
                                 PopupMenuItem(
                                   value: 'delete',
-                                  onTap: _handleDelete,
+                                  onTap: widget.onDelete,
                                   child: const Text('Delete'),
                                 ),
-                                // Add more options as needed
                               ],
                             ),
                           ),

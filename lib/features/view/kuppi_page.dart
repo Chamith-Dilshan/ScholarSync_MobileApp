@@ -2,9 +2,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:scholarsync/common/button_icon.dart';
 import 'package:scholarsync/common/search_bar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/features/view/home_page.dart';
@@ -17,8 +15,6 @@ import 'package:scholarsync/utils/kuppi_repository.dart';
 import '../../models/kuppi.dart';
 import '../widgets/image_form_field.dart';
 
-final KuppiRepository _kuppiRepository = KuppiRepository();
-
 class KuppiPage extends StatefulWidget {
   const KuppiPage({super.key});
 
@@ -30,6 +26,8 @@ class _KuppiPageState extends State<KuppiPage> {
   File? _selectedImage;
   bool _isImageSelected = false;
   String? downloadURL;
+
+  final KuppiRepository _kuppiRepository = KuppiRepository();
 
   final _nameController = TextEditingController();
   final _dateController = TextEditingController();
@@ -54,6 +52,16 @@ class _KuppiPageState extends State<KuppiPage> {
     } catch (e) {
       print(e);
     }
+  }
+
+  void _handleDelete(KuppiSession session) async {
+    await _kuppiRepository.deleteKuppiSession(session.id);
+    _deleteImage(session);
+  }
+
+  void _deleteImage(KuppiSession session) async {
+    var imageRef = FirebaseStorage.instance.refFromURL(session.imageUrl);
+    await imageRef.delete();
   }
 
   Future uploadImage() async {
@@ -158,15 +166,27 @@ class _KuppiPageState extends State<KuppiPage> {
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         KuppiSession session = snapshot.data![index];
-                        return ImageWithTextWidget(
-                          id: session.id,
-                          title: session.name.toUpperCase(),
-                          subtitle: 'by ${session.conductor}',
-                          date: formatDate(session.date),
-                          imageUrl: session.imageUrl,
-                          onDelete: () {
-                            setState(() {});
-                          },
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: KuppiWidget(
+                            id: session.id,
+                            title: session.name.toUpperCase(),
+                            subtitle: 'by ${session.conductor}',
+                            date: formatDate(session.date),
+                            imageUrl: session.imageUrl,
+                            onDelete: () {
+                              Future.delayed(Duration.zero).then((value) {
+                                _handleDelete(session);
+                              });
+                              setState(() {});
+                            },
+                            onEdit: () {
+                              Future.delayed(Duration.zero).then((value) {
+                                _showFormDialog(context, session: session);
+                              });
+                              setState(() {});
+                            },
+                          ),
                         );
                       },
                     );
@@ -194,18 +214,31 @@ class _KuppiPageState extends State<KuppiPage> {
         ));
   }
 
-  void _showFormDialog(BuildContext context) async {
-    _resetFormFields();
+  void _showFormDialog(BuildContext context, {KuppiSession? session}) async {
+    final parentContext = context;
+    bool isEditing = session != null;
+
+    if (isEditing) {
+      _nameController.text = session.name;
+      _dateController.text = DateFormat('yyyy-MM-dd').format(session.date);
+      _conductorController.text = session.conductor;
+      _linkController.text = session.link;
+      downloadURL = session.imageUrl;
+    } else {
+      _resetFormFields();
+    }
 
     showDialog(
-      context: context,
+      context: parentContext,
       builder: (BuildContext context) {
         return ReusableFormDialog(
-          title: 'Add New Kuppi Session',
-          buttonLabel: 'Add',
+          title: isEditing ? 'Edit Kuppi Session' : 'Add New Kuppi Session',
+          buttonLabel: isEditing ? 'Save' : 'Add',
           formFields: [
             const SizedBox(height: 5),
             ImageFormField(
+              initialImageUrl: isEditing ? session.imageUrl : null,
+              isEditing: isEditing,
               validator: (selectedImage) {
                 if (_isImageSelected == false) {
                   return 'Please select an image';
@@ -272,10 +305,29 @@ class _KuppiPageState extends State<KuppiPage> {
             ),
           ],
           onSubmit: (formData) async {
-            print("Add button is clicked");
             if (_isImageSelected) {
-              await createNewKuppiSession();
-              print("Kuppi session created");
+              if (isEditing) {
+                // Delete the old image
+                _deleteImage(session);
+
+                // Upload the new image and get the download URL
+                await uploadImage();
+
+                // Update the session properties
+                session.name = _nameController.text.trim();
+                session.date = DateTime.parse(_dateController.text.trim());
+                session.conductor = _conductorController.text.trim();
+                session.link = _linkController.text.trim();
+                session.imageUrl = downloadURL!;
+
+                // Update the session in the repository
+                await _kuppiRepository.updateKuppiSession(session);
+
+                setState(() {});
+              } else {
+                // Create a new session
+                await createNewKuppiSession();
+              }
             }
           },
           onPop: () {
