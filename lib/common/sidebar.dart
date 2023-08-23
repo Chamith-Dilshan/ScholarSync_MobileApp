@@ -70,6 +70,7 @@ class _SidebaryyState extends State<Sidebaryy> {
                   );
                   },
                 ),
+                //setting page
                 ListTile(
                   leading: const Icon(Icons.settings),
                   title: const Text('Settings'),
@@ -77,21 +78,25 @@ class _SidebaryyState extends State<Sidebaryy> {
                     Navigator.of(context).push(MaterialPageRoute(builder:(_){return const SettingsPage();}));
                   },
                 ),
+                //acadamic staff page
                 ListTile(
                   leading: const Icon(Icons.school),
                   title: const Text('Academic Staff'),
                   onTap: () { Navigator.of(context).push(MaterialPageRoute(builder:(_){return const AcademicStaffPage();}));},
                 ),
+                //feedback form
                 ListTile(
                   leading: const Icon(Icons.feedback),
                   title: const Text('Give Feedback'),
                   onTap: () {Navigator.of(context).push(MaterialPageRoute(builder:(_){return const FeedbackForm();}));},
                 ),
+                //rate us page
                 ListTile(
                   leading: const Icon(Icons.star),
                   title: const Text('Rate Us'),
                   onTap: () {Navigator.of(context).push(MaterialPageRoute(builder:(_){return const FeedbackForm();}));},
                 ),
+                //log out
                 ListTile(
                   leading: const Icon(Icons.logout),
                   title: const Text('Log Out'),
