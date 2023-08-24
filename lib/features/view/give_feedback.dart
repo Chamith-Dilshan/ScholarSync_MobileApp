@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scholarsync/common/sidebar.dart';
 // import 'package:scholarsync/common/nav_bar.dart';
 import '../../theme/palette.dart';
 
@@ -19,6 +20,7 @@ class FeedbackFormState extends State<FeedbackForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PaletteLightMode.backgroundColor,
+      endDrawer:  const Sidebar(),
       appBar: AppBar(
         title: const Text(
           'Give Feedback',
