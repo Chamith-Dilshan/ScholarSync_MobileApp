@@ -10,6 +10,7 @@ class PaletteLightMode {
   static const Color primaryGreenColor = Color(0xFF132A13);
   static const Color secondaryGreenColor = Color(0xFF6A994E);
   static const Color primaryRedColor = Color(0xFFCC0025);
+  static const Color errorColor = Color(0xFFae0000);
   static const Color transparentColor = Color(0x00000000);
   static const Color shadowColor = Color.fromRGBO(11, 24, 43, 0.08);
 }
