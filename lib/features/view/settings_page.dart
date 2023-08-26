@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scholarsync/common/nav_bar.dart';
+import 'package:scholarsync/common/sidebar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/features/view/login_page.dart';
 import 'package:scholarsync/theme/palette.dart';
@@ -14,6 +15,7 @@ const SettingsPage({Key? key}) : super(key: key);
 @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer:  const Sidebar(),
       appBar: UIConstants.appBar(
         title: 'Settings',
         fontSize: 22,

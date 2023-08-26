@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scholarsync/common/sidebar.dart';
 // import 'package:scholarsync/common/nav_bar.dart';
 import '../../theme/palette.dart';
 
@@ -19,6 +20,7 @@ class FeedbackFormState extends State<FeedbackForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PaletteLightMode.backgroundColor,
+      endDrawer:  const Sidebar(),
       appBar: AppBar(
         title: const Text(
           'Give Feedback',
@@ -53,46 +55,46 @@ class FeedbackFormState extends State<FeedbackForm> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                             
-                      const Text(
+                       const Text(
                         'Help us serve you better',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16
                           ),
                       ),
-                      const SizedBox(height: 20),
-                      const Text(
+                       const SizedBox(height: 20),
+                       const Text(
                         'How would you rate your overall experience with ScholarSync?*',
                         style: TextStyle(
                           fontSize: 13
                           ),
                       ),
-                      const SizedBox(height: 15),
+                       const SizedBox(height: 15),
                         Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           feedbackColorBox('Terrible', Icons.sentiment_very_dissatisfied, 0),
-                          const SizedBox(width: 2),
+                           const SizedBox(width: 2),
                           feedbackColorBox('Bad', Icons.sentiment_dissatisfied,1),
-                          const SizedBox(width: 2),
+                           const SizedBox(width: 2),
                           feedbackColorBox('Okay', Icons.sentiment_neutral,2),
-                          const SizedBox(width: 2),
+                           const SizedBox(width: 2),
                           feedbackColorBox('Good', Icons.sentiment_satisfied,3),
-                          const SizedBox(width: 2),
+                           const SizedBox(width: 2),
                           feedbackColorBox('Amazing', Icons.sentiment_very_satisfied,4),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                       const SizedBox(height: 20),
                       SingleChildScrollView(
                         child: Column(
                           children: [
-                            const Text(
+                             const Text(
                               'What specific features do you like most about the app?',
                               style: TextStyle(
                                 fontSize: 13,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                             const SizedBox(height: 8),
                             TextFormField(
                               controller: _controller1,
                               decoration:  InputDecoration(
@@ -101,9 +103,8 @@ class FeedbackFormState extends State<FeedbackForm> {
                                   borderRadius: BorderRadius.circular(10),
                                   borderSide: const BorderSide(color: Colors.grey, width: 1),
                                 ),
-                                
-                                ),
-                              validator: (value) {
+                              ),
+                                validator: (value){
                                 if (value==null || value.isEmpty) {
                                   return 'Please enter your rating';
                                 }
