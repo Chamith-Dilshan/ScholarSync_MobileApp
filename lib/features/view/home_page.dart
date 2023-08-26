@@ -93,9 +93,10 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding:const EdgeInsets.all(8),
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: [
+            children:[
               //searchbar
               CustomSearchBar(
                 hint: 'Search for students and clubs...',
@@ -106,14 +107,18 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 5,),
 
               //carousel
-              const Carousel(
-                imageList: [
+              Carousel(
+                imageList: const [
                   ImageConstants.kuppi1,
                   ImageConstants.aiesec1,
                   ImageConstants.aiesec2,
                   ImageConstants.aiesec3,
                   ImageConstants.aiesec2,
-                ],
+                ], 
+                onPressedDeleteButton: () { 
+
+                 },
+
               ),
               const SizedBox(height: 5,),
 
@@ -170,44 +175,6 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               const SizedBox(height: 10,),
-
-              //text
-              const TextContainer(
-                fontText:'Today’s Lectures',
-              ),
-              const SizedBox(height: 5,),
-
-            // CustomTextField(
-            //   firstLine: "First Line Text",
-            //   secondPartFirstline: "Second Part Text",
-            //   secondLine: "Second Line Text",
-            //   thirdLine: "Third Line Text",
-            //   firstLineStyle: const TextStyle(fontSize: 18, color: Colors.black),
-            //   secondLineStyle: const TextStyle(fontSize: 16, color: Colors.blue),
-            //   thirdLineStyle: const TextStyle(fontSize: 14, color: Colors.green),
-            //   secondPartFirstLineStyle: const TextStyle(fontWeight: FontWeight.bold),
-            //   controller: TextEditingController(),
-            //   ontapBox: () {
-            //     // onTap function for the Box
-            //   },
-            //   ontapFrontIcon: (){
-            //     //onTap funtion for FrontIcon
-            //   },
-            //   ontapBackIcon: () {
-            //     //ontap funtion for backIcon
-            //   },
-            //   frontIcon: IconConstants.bellFilledIcon,
-            //   backIcon: IconConstants.moonIcon,
-            //   frontIconScale: 50,
-            //   backIconScale: 50,
-            //   borderColor: PaletteLightMode.titleColor,
-            //   borderWidth: 10,
-            //   backgroundColor: PaletteLightMode.backgroundColor,
-            //   boxwidth: 350,
-            //   boxheight: 300,
-            //   borderRadius:30,
-            //   padding: 16,  
-            //   )
             ],
           ),
         ),
