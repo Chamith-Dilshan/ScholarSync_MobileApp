@@ -7,7 +7,7 @@ environment:
   sdk: '>=3.0.6 <4.0.0'
 
 dependencies:
-    calendar_view: ^1.0.3
+  calendar_view: ^1.0.3
   cupertino_icons: ^1.0.5
   device_preview: ^1.1.0
   flutter:
@@ -24,6 +24,7 @@ dependencies:
   firebase_auth: ^4.7.2
   cloud_firestore: ^4.8.4
   url_launcher: ^6.0.12
+  firebase messaging: ^12.0.1
 
 dev_dependencies:
   flutter_test:
