@@ -7,6 +7,7 @@ class Notifications {
   final String title;
   final String type;
   final DateTime timeStamp;
+  final String currentUserUid;
 
   const Notifications({
     required this.targetUid,
@@ -14,6 +15,7 @@ class Notifications {
     required this.title,
     required this.timeStamp,
     required this.type,
+    required this.currentUserUid,
   });
 
   factory Notifications.fromSnapshot(DocumentSnapshot snapshot) {
@@ -24,46 +26,48 @@ class Notifications {
       message: snapshotData['message'] as String,
       timeStamp: (snapshotData['timeStamp'] as Timestamp).toDate(),
       targetUid: snapshotData['targetUid'] as String,
+      currentUserUid: snapshotData['currentuserUid'] as String,
       type: snapshotData['type'] as String,
     );
   }
 
-  
-  static Stream<Map<String, List<Notifications>>> setupSegmentedNotificationsStream(String currentUserUid) {
-    return FirebaseFirestore.instance
-        .collection('notifications')
-        .where('targetUid', isEqualTo: currentUserUid)
-        .orderBy('timeStamp', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      final notifications = snapshot.docs.map((doc) => Notifications.fromSnapshot(doc)).toList();
+ void setupNotificationsListener() {
+  FirebaseFirestore.instance.collection('notifications')
+      .where('targetUid', isEqualTo: currentUserUid) // Replace with user's UID
+      .orderBy('timestamp', descending: true)
+      .snapshots()
+      .listen((QuerySnapshot snapshot) {
+   
+  });
+}
+// Helper function to categorize notifications
+String categorizeNotification(DateTime timestamp) {
+  DateTime now = DateTime.now();
+  DateTime today = DateTime(now.year, now.month, now.day);
+  DateTime yesterday = today.subtract(const Duration(days: 1));
 
-      Map<String, List<Notifications>> segmentedNotifications = {
-        'today': [],
-        'yesterday': [],
-        'previous': [],
-      };
-
-      final now = DateTime.now();
-
-      for (var notification in notifications) {
-        if (now.difference(notification.timeStamp).inDays == 0) {
-          segmentedNotifications['today']?.add(notification);
-        } else if (now.difference(notification.timeStamp).inDays == 1) {
-          segmentedNotifications['yesterday']?.add(notification);
-        } else {
-          segmentedNotifications['previous']?.add(notification);
-        }
-      }
-
-      // Ensure each segment contains at most three notifications
-      segmentedNotifications.forEach((key, value) {
-        if (value.length > 3) {
-          segmentedNotifications[key] = value.sublist(0, 3);
-        }
-      });
-
-      return segmentedNotifications;
-    });
+  if (timestamp.isAfter(today)) {
+    return "Today";
+  } else if (timestamp.isAfter(yesterday)) {
+    return "Yesterday";
+  } else {
+    return "Previous";
   }
+}
+
+// Calculate relative time difference
+String calculateRelativeTime(DateTime timestamp) {
+  Duration difference = DateTime.now().difference(timestamp);
+  
+  if (difference.inSeconds < 60) {
+    return "${difference.inSeconds} secs ago";
+  } else if (difference.inMinutes < 60) {
+    return "${difference.inMinutes} mins ago";
+  } else if (difference.inHours < 24) {
+    return "${difference.inHours} hours ago";
+  } else {
+    return "${difference.inDays} days ago";
+  }
+}
+
 }
