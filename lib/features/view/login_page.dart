@@ -30,7 +30,7 @@ class _LogInPageState extends State<LogInPage> {
   }
 
   void logInUser() async {
-    print("logfuck");
+    print("press the login button");
     setState(() {
       _isLoadig = true;
     });

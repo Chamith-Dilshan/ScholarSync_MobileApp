@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scholarsync/common/sidebar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
 import 'package:scholarsync/features/widgets/academic_staff_page_tab.dart';
@@ -31,6 +32,7 @@ class _AcademicStaffPageState extends State<AcademicStaffPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer:  const Sidebar(),
       appBar: UIConstants.appBar(
         title: 'Academic Staff',
         fontSize: 22,

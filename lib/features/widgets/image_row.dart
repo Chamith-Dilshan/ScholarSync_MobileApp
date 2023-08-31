@@ -18,6 +18,7 @@ class ImageRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       scrollDirection: Axis.horizontal,
       child: Row(
         children: List.generate(
@@ -40,7 +41,7 @@ class ImageRow extends StatelessWidget {
             border: Border.all(color: PaletteLightMode.backgroundColor, width: 0),
           ),
           child: ClipRRect(
-            borderRadius: isCircle ? BorderRadius.circular(containerWidth / 2) : BorderRadius.zero,
+            borderRadius: isCircle ? BorderRadius.circular(containerWidth / 2) : BorderRadius.circular(10),
             child: Image.asset(
               imagePath,
               fit: BoxFit.cover,

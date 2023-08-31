@@ -10,6 +10,7 @@ class ReusableFormDialog extends StatefulWidget {
   final List<Widget> formFields;
   final void Function(Map<String, String> formData)? onSubmit;
   final String buttonLabel;
+  final void Function()? onPop;
 
   const ReusableFormDialog({
     Key? key,
@@ -17,6 +18,7 @@ class ReusableFormDialog extends StatefulWidget {
     required this.buttonLabel,
     required this.formFields,
     this.onSubmit,
+    this.onPop,
   }) : super(key: key);
 
   @override
@@ -84,7 +86,7 @@ class _ReusableFormDialogState extends State<ReusableFormDialog> {
                       widget.onSubmit!(_formData);
                     }
 
-                    Navigator.pop(context);
+                    Navigator.of(context).pop();
                   }
                 },
                 backgroundColor: PaletteLightMode.secondaryGreenColor,

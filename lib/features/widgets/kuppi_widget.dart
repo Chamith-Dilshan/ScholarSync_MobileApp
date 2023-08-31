@@ -1,26 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:scholarsync/theme/palette.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ImageWithTextWidget extends StatefulWidget {
+class KuppiWidget extends StatefulWidget {
+  final String id;
   final String title;
   final String subtitle;
-  final String imagePath;
+  final String imageUrl;
+  final String link;
   final String date;
+  final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
-  const ImageWithTextWidget({
+  const KuppiWidget({
     Key? key,
+    required this.id,
     required this.title,
     required this.subtitle,
-    required this.imagePath,
+    required this.imageUrl,
+    required this.link,
     required this.date,
+    required this.onDelete,
+    required this.onEdit,
   }) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _ImageWithTextWidgetState createState() => _ImageWithTextWidgetState();
+  _KuppiWidgetState createState() => _KuppiWidgetState();
 }
 
-class _ImageWithTextWidgetState extends State<ImageWithTextWidget> {
+class _KuppiWidgetState extends State<KuppiWidget> {
   bool isFavorite = false;
 
   @override
@@ -41,13 +50,19 @@ class _ImageWithTextWidgetState extends State<ImageWithTextWidget> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(
-            widget.imagePath,
-            width: 160,
-            height: 160,
-            fit: BoxFit.cover,
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(10),
+              bottomLeft: Radius.circular(10),
+            ),
+            child: Image.network(
+              widget.imageUrl,
+              width: 160,
+              height: 160,
+              fit: BoxFit.cover,
+            ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,15 +89,16 @@ class _ImageWithTextWidgetState extends State<ImageWithTextWidget> {
                             angle: 1.5708, // 90 degrees in radians
                             child: PopupMenuButton<String>(
                               itemBuilder: (context) => [
-                                const PopupMenuItem(
-                                  value: 'option1',
-                                  child: Text('Option 1'),
+                                PopupMenuItem(
+                                  value: 'edit',
+                                  onTap: widget.onEdit,
+                                  child: const Text('Edit'),
                                 ),
-                                const PopupMenuItem(
-                                  value: 'option2',
-                                  child: Text('Option 2'),
+                                PopupMenuItem(
+                                  value: 'delete',
+                                  onTap: widget.onDelete,
+                                  child: const Text('Delete'),
                                 ),
-                                // Add more options as needed
                               ],
                             ),
                           ),
@@ -113,10 +129,15 @@ class _ImageWithTextWidgetState extends State<ImageWithTextWidget> {
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          // Add your join button logic here
+                        onPressed: () async {
+                          try {
+                            await launchUrl(Uri.parse(widget.link));
+                          } catch (e) {
+                            throw 'could not launch url';
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
