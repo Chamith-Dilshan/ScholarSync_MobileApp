@@ -18,8 +18,6 @@ import 'features/view/notifications_page.dart';
 final userStreamProvider = StreamProvider.autoDispose<UserRepo>((ref) {
   final userRepository = ref.watch(userRepositoryProvider);
   final auth = FirebaseAuth.instance;
-
-  // Assuming you're using Firebase Auth and the user is authenticated
   final userId = auth.currentUser?.uid;
 
   if (userId != null) {

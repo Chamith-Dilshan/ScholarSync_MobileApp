@@ -11,6 +11,7 @@ class UserRepository {
         return UserRepo.fromSnap(snapshot);
       } else {
         // You can return a default instance or throw an exception here if needed
+        print('Snapshot does not exits: $userId');
         return const UserRepo(
           username: '',
           uid: '',
