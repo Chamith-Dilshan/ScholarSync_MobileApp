@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:scholarsync/common/sidebar.dart';
+//import 'package:scholarsync/common/sidebar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
 import 'package:scholarsync/features/widgets/academic_staff_page_tab.dart';
 import 'package:scholarsync/features/widgets/lecturer_info.dart';
+import 'package:scholarsync/common/sidebar_bloc.dart';
 
-class AcademicStaffPage extends StatefulWidget {
+class AcademicStaffPage extends StatefulWidget implements NavigationStates{
   const AcademicStaffPage({super.key});
 
   @override
@@ -32,7 +33,6 @@ class _AcademicStaffPageState extends State<AcademicStaffPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer:  const Sidebar(),
       appBar: UIConstants.appBar(
         title: 'Academic Staff',
         fontSize: 22,
@@ -52,6 +52,7 @@ class _AcademicStaffPageState extends State<AcademicStaffPage>
             MaterialPageRoute(builder: (context) => const LogInPage()),
           );*/
         },
+        
       ),
       body: Column(
         children: [

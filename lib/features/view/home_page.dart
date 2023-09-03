@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:scholarsync/common/search_bar.dart';
-import 'package:scholarsync/common/sidebar.dart';
+//import 'package:scholarsync/common/sidebar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/image_constants.dart';
 import 'package:scholarsync/main.dart';
@@ -10,8 +10,9 @@ import '../../common/text_container.dart';
 import '../../theme/palette.dart';
 import '../widgets/carousel.dart';
 import '../widgets/image_row.dart';
-
-class HomePage extends ConsumerStatefulWidget {
+import 'package:scholarsync/common/sidebar_bloc.dart';
+//import 'package:scholarsync/common/sidebar_layout.dart';
+class HomePage extends ConsumerStatefulWidget implements NavigationStates{
   const HomePage({super.key});
 
   @override
@@ -23,7 +24,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     return ref.watch(userStreamProvider).when(data: (userData) {
       return Scaffold(
-        endDrawer: const Sidebar(),
         appBar: AppBar(
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +58,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                       fontWeight: FontWeight.normal,
                     ),
                   ),
+                  
                 ],
+                
               ),
             ],
           ),
@@ -68,23 +70,23 @@ class _HomePageState extends ConsumerState<HomePage> {
             fontWeight: FontWeight.bold,
           ),
           centerTitle: false,
-          actions: <Widget>[
-            IconButton(
-              icon: SvgPicture.asset(
-                IconConstants.hamburgerMenuIcon,
-                colorFilter: const ColorFilter.mode(
-                  PaletteLightMode.secondaryGreenColor,
-                  BlendMode.srcIn,
-                ),
-                width: 40,
-                height: 40,
-              ),
-              tooltip: 'Menu',
-              onPressed: () {
-                //Open the Sidebar
-              },
-            ),
-          ],
+          // actions: <Widget>[
+          //   IconButton(
+          //     icon: SvgPicture.asset(
+          //       IconConstants.hamburgerMenuIcon,
+          //       colorFilter: const ColorFilter.mode(
+          //         PaletteLightMode.secondaryGreenColor,
+          //         BlendMode.srcIn,
+          //       ),
+          //       width: 40,
+          //       height: 40,
+          //     ),
+          //     tooltip: 'Menu',
+          //     onPressed: () {
+          //       //Open the Sidebar
+          //     },
+          //   ),
+          // ],
         ),
         body: Padding(
           padding: const EdgeInsets.only(left: 8,right: 8,top: 8,bottom: 0),

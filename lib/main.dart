@@ -9,6 +9,7 @@ import 'package:scholarsync/theme/app_theme.dart';
 import 'package:scholarsync/theme/palette.dart';
 import 'package:scholarsync/utils/user_repository.dart';
 import 'common/bottom_nav_bar.dart';
+import 'common/sidebar_layout.dart';
 import 'features/view/calendar_page.dart';
 import 'features/view/home_page.dart';
 import 'features/view/kuppi_page.dart';
@@ -52,17 +53,18 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return CalendarControllerProvider(
-      controller: EventController(),
-      child: MaterialApp(
-        theme: AppThemeLight.theme,
-        debugShowCheckedModeBanner: false,
-        home: StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.active) {
-              if (snapshot.hasData) {
-                return Scaffold(
+  return CalendarControllerProvider(
+    controller: EventController(),
+    child: MaterialApp(
+      theme: AppThemeLight.theme,
+      debugShowCheckedModeBanner: false,
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.hasData) {
+              return SidebarLayout(
+                child: Scaffold(
                   body: _getPage(_selectedPageIndex),
                   bottomNavigationBar: BottomNavBar(
                     initialIndex: _selectedPageIndex,
@@ -71,26 +73,27 @@ class _MainAppState extends State<MainApp> {
                       _onNavBarItemSelected(_getPageNumber(page));
                     },
                   ),
-                );
-              }
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text('${snapshot.error}'),
-                );
-              }
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: PaletteLightMode.primaryGreenColor,
                 ),
               );
             }
-            return const LogInPage();
-          },
-        ),
+            if (snapshot.hasError) {
+              return Center(
+                child: Text('${snapshot.error}'),
+              );
+            }
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: PaletteLightMode.primaryGreenColor,
+              ),
+            );
+          }
+          return const LogInPage();
+        },
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _getPage(int index) {
     switch (index) {

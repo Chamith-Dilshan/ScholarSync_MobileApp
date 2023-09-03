@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:scholarsync/common/project_box.dart';
+import 'package:scholarsync/common/sidebar_bloc.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
 import 'package:scholarsync/features/widgets/profile_info.dart';
 import 'package:scholarsync/theme/palette.dart';
 
-class MyProfilePage extends StatefulWidget {
+class MyProfilePage extends StatefulWidget implements NavigationStates{
   const MyProfilePage({super.key});
 
   @override

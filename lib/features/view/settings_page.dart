@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scholarsync/common/nav_bar.dart';
-import 'package:scholarsync/common/sidebar.dart';
+//import 'package:scholarsync/common/sidebar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/features/view/login_page.dart';
 import 'package:scholarsync/theme/palette.dart';
@@ -8,14 +8,14 @@ import 'package:scholarsync/common/custom_textfield.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
 // import 'package:scholarsync/theme/app_theme.dart';
 // import 'package:scholarsync/features/view/home_page.dart';
+import 'package:scholarsync/common/sidebar_bloc.dart';
 
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatelessWidget implements NavigationStates{
 const SettingsPage({Key? key}) : super(key: key);
 @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer:  const Sidebar(),
       appBar: UIConstants.appBar(
         title: 'Settings',
         fontSize: 22,
