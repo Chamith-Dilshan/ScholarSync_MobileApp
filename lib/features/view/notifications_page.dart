@@ -30,7 +30,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           );
         },
       ),
-      backgroundColor: PaletteLightMode.backgroundColor,
+     
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
