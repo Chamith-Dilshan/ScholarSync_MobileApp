@@ -19,9 +19,9 @@ class PaletteDarktMode {
   //only test values dont freak out
   static const Color whiteColor = Color.fromARGB(255, 28, 27, 27);
   static const Color backgroundColor = Color.fromARGB(255, 1, 1, 1);
-  static const Color titleColor = Color(0xFF181818);
+  static const Color titleColor = Color.fromARGB(255, 224, 222, 222);
   static const Color textColor = Color(0xFF3A3F47);
-  static const Color secondaryTextColor = Color(0xFF83898F);
+  static const Color secondaryTextColor = Color.fromARGB(255, 47, 48, 48);
   static const Color primaryGreenColor = Color(0xFF132A13);
   static const Color secondaryGreenColor = Color(0xFF6A994E);
   static const Color primaryRedColor = Color(0xFFCC0025);

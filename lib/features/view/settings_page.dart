@@ -27,6 +27,21 @@ class _SettingsPageState extends State<SettingsPage> {
       _themeMode = themeMode;
     });
   }
+
+ void toggleTheme() {
+    final currentTime = TimeOfDay.now();
+
+    if (currentTime.hour >= 19 || currentTime.hour < 6) {
+      _themeMode = ThemeMode.dark; // Night set to dark mode
+    } else {
+      _themeMode = ThemeMode.light; // Day  set to light mode
+    }
+
+    setState(() {
+      // based on the time of day
+      _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
 @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,13 +168,13 @@ body: Padding(
                 ),
                 controller: TextEditingController(),
                 ontapBox: () {
-                  // onTap function for the Box
+                
                 },
                 ontapFrontIcon: () {
                   // onTap function for FrontIcon
                 },
                 ontapBackIcon: () {
-                  // onTap function for backIcon
+                  toggleTheme();
                 },
                 frontIcon: IconConstants.darkNightModeIcon,
                 backIcon: IconConstants.toggleOffIcon,
@@ -190,5 +205,6 @@ body: Padding(
       );
     
   }
+}
 }
 

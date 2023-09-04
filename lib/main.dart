@@ -62,6 +62,7 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
+
     return CalendarControllerProvider(
       controller: EventController(),
       child: MaterialApp(
