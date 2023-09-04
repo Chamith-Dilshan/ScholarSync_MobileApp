@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:scholarsync/common/nav_bar.dart';
 import 'package:scholarsync/common/sidebar.dart';
@@ -18,6 +20,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+    //darkmode
+  ThemeMode _themeMode = ThemeMode.light;
+  void changeTheme(ThemeMode themeMode) {
+    setState(() {
+      _themeMode = themeMode;
+    });
+  }
 @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,7 +127,7 @@ body: Padding(
                   // onTap function for FrontIcon
                 },
                 ontapBackIcon: () {
-                  // onTap function for backIcon
+                  changeTheme(ThemeMode.dark);
                 },
                 frontIcon: IconConstants.moonIcon,
                 backIcon: IconConstants.toggleOffIcon,
