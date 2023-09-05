@@ -196,15 +196,9 @@ body: Padding(
       ),
      
 
-  bottomNavigationBar: NavBar(
-          onItemSelected: (int index) {
-            // Handle navigation or actions based on the selected index
-            // For example
-          },
-        ),
-      );
+  
     
   }
 }
-}
+
 
