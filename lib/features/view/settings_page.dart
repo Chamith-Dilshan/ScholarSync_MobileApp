@@ -1,8 +1,4 @@
-// ignore_for_file: unused_field
-
 import 'package:flutter/material.dart';
-import 'package:scholarsync/common/nav_bar.dart';
-import 'package:scholarsync/common/sidebar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/features/view/login_page.dart';
 import 'package:scholarsync/theme/palette.dart';
@@ -11,41 +7,13 @@ import 'package:scholarsync/constants/ui_constants.dart';
 // import 'package:scholarsync/theme/app_theme.dart';
 // import 'package:scholarsync/features/view/home_page.dart';
 
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
 
-  @override
-  // ignore: library_private_types_in_public_api
-  _SettingsPageState createState() => _SettingsPageState();
-}
 
-class _SettingsPageState extends State<SettingsPage> {
-    //darkmode
-  ThemeMode _themeMode = ThemeMode.light;
-  void changeTheme(ThemeMode themeMode) {
-    setState(() {
-      _themeMode = themeMode;
-    });
-  }
-
- void toggleTheme() {
-    final currentTime = TimeOfDay.now();
-
-    if (currentTime.hour >= 19 || currentTime.hour < 6) {
-      _themeMode = ThemeMode.dark; // Night set to dark mode
-    } else {
-      _themeMode = ThemeMode.light; // Day  set to light mode
-    }
-
-    setState(() {
-      // based on the time of day
-      _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    });
-  }
+class SettingsPage extends StatelessWidget {
+const SettingsPage({Key? key}) : super(key: key);
 @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer:  const Sidebar(),
       appBar: UIConstants.appBar(
         title: 'Settings',
         fontSize: 22,
@@ -70,7 +38,7 @@ class _SettingsPageState extends State<SettingsPage> {
        backgroundColor: PaletteLightMode.backgroundColor,
       //body
 body: Padding(
-        padding: const EdgeInsets.all(10.0),
+         padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -84,7 +52,19 @@ body: Padding(
             ),
             const SizedBox(height: 10),
             //settings widget 01
-            Center(
+
+             Container(
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: PaletteLightMode.shadowColor,
+                    offset: Offset(8, 8),
+                    blurRadius: 24,
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+            child: Center(
               child: CustomTextField(
                 firstLine: "Receive Notifications",
                 firstLineStyle: const TextStyle(
@@ -114,6 +94,7 @@ body: Padding(
                 padding: 16,
               ),
             ),
+             ),
 
 // Add spacing between the CustomTextField and the new Text widget
 
@@ -127,7 +108,19 @@ body: Padding(
               ),
             ),
 //settings widget 02
-          Center(
+
+           Container(
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: PaletteLightMode.shadowColor,
+                    offset: Offset(8, 8),
+                    blurRadius: 24,
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+         child: Center(
               child: CustomTextField(
                 firstLine: "Dark Mode",
                 firstLineStyle: const TextStyle(
@@ -142,7 +135,7 @@ body: Padding(
                   // onTap function for FrontIcon
                 },
                 ontapBackIcon: () {
-                  changeTheme(ThemeMode.dark);
+                  // onTap function for backIcon
                 },
                 frontIcon: IconConstants.moonIcon,
                 backIcon: IconConstants.toggleOffIcon,
@@ -157,9 +150,21 @@ body: Padding(
                 padding: 16,
               ),
             ),
+          ),
              const SizedBox(height: 10),
 //settings widget 03
-             Center(
+             Container(
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: PaletteLightMode.shadowColor,
+                    offset: Offset(8, 8),
+                    blurRadius: 24,
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+             child:Center(
               child: CustomTextField(
                 firstLine: "Auto Dark Mode",
                 firstLineStyle: const TextStyle(
@@ -168,13 +173,13 @@ body: Padding(
                 ),
                 controller: TextEditingController(),
                 ontapBox: () {
-                
+                  // onTap function for the Box
                 },
                 ontapFrontIcon: () {
                   // onTap function for FrontIcon
                 },
                 ontapBackIcon: () {
-                  toggleTheme();
+                  // onTap function for backIcon
                 },
                 frontIcon: IconConstants.darkNightModeIcon,
                 backIcon: IconConstants.toggleOffIcon,
@@ -189,6 +194,7 @@ body: Padding(
                 padding: 16,
               ),
             ),
+             ),
 
           ],
         ),
@@ -196,9 +202,8 @@ body: Padding(
       ),
      
 
-  
+ 
+      );
     
   }
 }
-
-
