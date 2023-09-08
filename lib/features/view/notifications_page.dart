@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:scholarsync/common/sidebar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/theme/palette.dart';
 import 'package:scholarsync/common/custom_textfield.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
 import 'package:scholarsync/features/view/login_page.dart';
+
 
 
 class NotificationsPage extends StatelessWidget {
@@ -22,16 +22,16 @@ const NotificationsPage({Key? key}) : super(key: key);
         onBackIconButtonpressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Sidebar()),
+            MaterialPageRoute(builder: (context) => const LogInPage()),
           );
         },
       ),
-     
 
    //body
    body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
+        padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+        child: SingleChildScrollView(
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
@@ -43,8 +43,19 @@ const NotificationsPage({Key? key}) : super(key: key);
               ),
             ),
             const SizedBox(height: 10),
-//Notification 01
-       Center(
+    // Notification 01
+     Container(
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: PaletteLightMode.shadowColor,
+                    offset: Offset(8, 8),
+                    blurRadius: 24,
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+            child:Center(
               child: CustomTextField(
                 firstLine: "Lecture hall allocation",
                 secondPartFirstline: "has been updated",
@@ -68,15 +79,15 @@ const NotificationsPage({Key? key}) : super(key: key);
                 backIconScale: 50,
                 borderColor: Colors.transparent,
                 borderWidth: 0,
-                backgroundColor: PaletteLightMode.backgroundColor,
+                backgroundColor: Colors.white,
                 boxwidth: 369.84,
                 boxheight: 75,
-                borderRadius:10,
+                borderRadius: 10,
                 padding: 16,
               ),
             ),
-            
-          const SizedBox(height: 20),
+           ),
+      const SizedBox(height: 20),
 //Notification 02
         const Text(
               'Yesterday',
@@ -86,7 +97,20 @@ const NotificationsPage({Key? key}) : super(key: key);
                 color: PaletteLightMode.textColor,
               ),
             ), 
-          Center(
+             const SizedBox(height: 10),
+             
+             Container(
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: PaletteLightMode.shadowColor,
+                    offset: Offset(8, 8),
+                    blurRadius: 24,
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+         child: Center(
               child: CustomTextField(
                 firstLine: "There are upcoming",
                 secondPartFirstline: "lectures",
@@ -110,44 +134,15 @@ const NotificationsPage({Key? key}) : super(key: key);
                 backIconScale: 50,
                 borderColor: PaletteLightMode.transparentColor,
                 borderWidth: 0,
-                backgroundColor: PaletteLightMode.backgroundColor,
+                backgroundColor: Colors.white,
                 boxwidth: 369.84,
                 boxheight: 75,
                 borderRadius:10,
                 padding: 16,
               ),
             ),
-            Center(
-              child: CustomTextField(
-                firstLine: "Lecture hall allocation",
-                secondPartFirstline: "has been updated",
-                thirdLine: "20 minutes ago",
-                firstLineStyle: const TextStyle(fontSize: 13, color: PaletteLightMode.textColor),
-                thirdLineStyle: const TextStyle(fontSize: 9, color: PaletteLightMode.secondaryTextColor),
-                secondPartFirstLineStyle: const TextStyle(fontWeight: FontWeight.bold),
-                controller: TextEditingController(),
-                ontapBox: () {
-                  // onTap function for the Box
-                },
-                ontapFrontIcon: () {
-                  // onTap function for FrontIcon
-                },
-                ontapBackIcon: () {
-                  // onTap function for backIcon
-                },
-                frontIcon: IconConstants.calendarIcon,
-                // backIcon: IconConstants.moonIcon,
-                frontIconScale: 50,
-                backIconScale: 50,
-                borderColor: Colors.transparent,
-                borderWidth: 0,
-                backgroundColor: PaletteLightMode.backgroundColor,
-                boxwidth: 369.84,
-                boxheight: 75,
-                borderRadius:10,
-                padding: 16,
-              ),
-            ),
+             ),
+            
           const SizedBox(height: 20),
 
           //Notification 03
@@ -159,12 +154,23 @@ const NotificationsPage({Key? key}) : super(key: key);
                 color: PaletteLightMode.textColor,
               ),
             ),
-            //Notification 
-       Center(
+             const SizedBox(height: 10),
+             Container(
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: PaletteLightMode.shadowColor,
+                    offset: Offset(8, 8),
+                    blurRadius: 24,
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+         child: Center(
               child: CustomTextField(
-                firstLine: "Lecture hall allocation",
-                secondPartFirstline: "has been updated",
-                thirdLine: "20 minutes ago",
+                firstLine: "There are upcoming",
+                secondPartFirstline: "lectures",
+                thirdLine: "30 minutes ago",
                 firstLineStyle: const TextStyle(fontSize: 13, color: PaletteLightMode.textColor),
                 thirdLineStyle: const TextStyle(fontSize: 9, color: PaletteLightMode.secondaryTextColor),
                 secondPartFirstLineStyle: const TextStyle(fontWeight: FontWeight.bold),
@@ -178,56 +184,28 @@ const NotificationsPage({Key? key}) : super(key: key);
                 ontapBackIcon: () {
                   // onTap function for backIcon
                 },
-                frontIcon: IconConstants.calendarIcon,
+                frontIcon: IconConstants.bellOutlinedIcon,
                 // backIcon: IconConstants.moonIcon,
                 frontIconScale: 50,
                 backIconScale: 50,
-                borderColor: Colors.transparent,
+                borderColor: PaletteLightMode.transparentColor,
                 borderWidth: 0,
-                backgroundColor: PaletteLightMode.backgroundColor,
+                backgroundColor: Colors.white,
                 boxwidth: 369.84,
                 boxheight: 75,
                 borderRadius:10,
                 padding: 16,
               ),
             ),
-            Center(
-              child: CustomTextField(
-                firstLine: "Lecture hall allocation",
-                secondPartFirstline: "has been updated",
-                thirdLine: "20 minutes ago",
-                firstLineStyle: const TextStyle(fontSize: 13, color: PaletteLightMode.textColor),
-                thirdLineStyle: const TextStyle(fontSize: 9, color: PaletteLightMode.secondaryTextColor),
-                secondPartFirstLineStyle: const TextStyle(fontWeight: FontWeight.bold),
-                controller: TextEditingController(),
-                ontapBox: () {
-                  // onTap function for the Box
-                },
-                ontapFrontIcon: () {
-                  // onTap function for FrontIcon
-                },
-                ontapBackIcon: () {
-                  // onTap function for backIcon
-                },
-                frontIcon: IconConstants.calendarIcon,
-                // backIcon: IconConstants.moonIcon,
-                frontIconScale: 50,
-                backIconScale: 50,
-                borderColor: Colors.transparent,
-                borderWidth: 0,
-                backgroundColor: PaletteLightMode.backgroundColor,
-                boxwidth: 369.84,
-                boxheight: 75,
-                borderRadius:10,
-                padding: 16,
-              ),
-            ),
+             ),
+            
           const SizedBox(height: 20),
+
 
     ],)
    ),
-      );
+   ),
+    );
   }
 }
-
 
