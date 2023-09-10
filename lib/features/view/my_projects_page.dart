@@ -7,6 +7,7 @@ import 'package:scholarsync/common/search_bar.dart';
 import 'package:scholarsync/common/text_form_field.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
+import 'package:scholarsync/features/view/home_page.dart';
 import 'package:scholarsync/theme/palette.dart';
 
 void main() {
@@ -21,13 +22,6 @@ class MyProjectsPage extends StatefulWidget {
 }
 
 class _MyProjectsPageState extends State<MyProjectsPage> {
- /* int _currentIndex = 0;
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +34,10 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
         frontIcon: IconConstants.leftArrowIcon,
         backIcon: IconConstants.hamburgerMenuIcon,
         onFrontIconButtonpressed: () {
-          /* Navigator.push(
+          Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const LogInPage()),
-          );*/
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
         },
         onBackIconButtonpressed: () {
           /* Navigator.push(
@@ -60,47 +54,46 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
               // Handle search query change
             ),
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 20.0,
-                crossAxisSpacing: 25.0,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
-                children: [
-                  const ProjectBox(
-                    projectNumber: '1',
-                    projectName: 'Project Name 1',
-                    date: '2023-07-23',
-                    githubLink: 'https://github.com/project1',
-                  ),
-                  const ProjectBox(
-                    projectNumber: '2',
-                    projectName: 'Project Name 2',
-                    date: '2023-07-24',
-                    githubLink: 'https://github.com/project2',
-                  ),
-                  const ProjectBox(
-                    projectNumber: '3',
-                    projectName: 'Project Name 3',
-                    date: '2023-07-25',
-                    githubLink: 'https://github.com/project3',
-                  ),
-                  const ProjectBox(
-                    projectNumber: '4',
-                    projectName: 'Project Name 4',
-                    date: '2023-07-26',
-                    githubLink: 'https://github.com/project4',
-                  ),
-                  const ProjectBox(
-                    projectNumber: '5',
-                    projectName: 'Project Name 5',
-                    date: '2023-07-26',
-                    githubLink: 'https://github.com/project4',
-                  ),
-                  _buildAddProjectBox(),
-                ],
-              ),
+            child: GridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 20.0,
+              crossAxisSpacing: 25.0,
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
+              children: [
+                const ProjectBox(
+                  projectNumber: '1',
+                  projectName: 'Project Name 1',
+                  date: '2023-07-23',
+                  githubLink: 'https://github.com/project1',
+                ),
+                const ProjectBox(
+                  projectNumber: '2',
+                  projectName: 'Project Name 2',
+                  date: '2023-07-24',
+                  githubLink: 'https://github.com/project2',
+                ),
+                const ProjectBox(
+                  projectNumber: '3',
+                  projectName: 'Project Name 3',
+                  date: '2023-07-25',
+                  githubLink: 'https://github.com/project3',
+                ),
+                const ProjectBox(
+                  projectNumber: '4',
+                  projectName: 'Project Name 4',
+                  date: '2023-07-26',
+                  githubLink: 'https://github.com/project4',
+                ),
+                const ProjectBox(
+                  projectNumber: '5',
+                  projectName: 'Project Name 5',
+                  date: '2023-07-26',
+                  githubLink: 'https://github.com/project4',
+                ),
+                _buildAddProjectBox(),
+              ],
             ),
+          ),
           ],
         ),
       );
