@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:scholarsync/constants/icon_constants.dart';
+//import 'package:flutter_svg/svg.dart';
+//import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/theme/palette.dart';
 
 class ProjectBox extends StatelessWidget {
+  final String id;
   final String projectNumber;
   final String projectName;
   final String date;
   final String githubLink;
+  final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   const ProjectBox({
     Key? key,
+    required this.id,
     required this.projectNumber,
     required this.projectName,
     required this.date,
     required this.githubLink,
+    required this.onDelete,
+    required this.onEdit,
   }) : super(key: key);
 
   @override
@@ -40,7 +46,7 @@ class ProjectBox extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
              // SvgPicture.asset(IconConstants.projectManagementIcon),
-              Text('Project $projectNumber'),
+              Text(projectNumber),
              // SvgPicture.asset(IconConstants.horizontalDotsIcon),
             ],
           ),

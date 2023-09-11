@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Project {
   final String id;
   final String projectNumber;
-  final String projectName;
-  final DateTime date;
-  final String githubLink;
+  late final String projectName;
+  late final DateTime date;
+  late final String githubLink;
 
   Project({
     required this.id,

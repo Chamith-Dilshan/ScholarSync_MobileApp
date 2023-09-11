@@ -77,7 +77,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   crossAxisSpacing: 25.0,
                   padding: const EdgeInsets.only(left: 25, right: 25),
                   children: const [
-                    ProjectBox(
+                /*    ProjectBox(
                       projectNumber: '1',
                       projectName: 'Project Name 1',
                       date: '2023-07-23',
@@ -100,7 +100,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       projectName: 'Project Name 4',
                       date: '2023-07-26',
                       githubLink: 'https://github.com/project4',
-                    ),
+                    ),*/
                   ],
                 ),
               ),
