@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:scholarsync/common/sidebar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
+import 'package:scholarsync/features/view/home_page.dart';
 import 'package:scholarsync/features/widgets/academic_staff_page_tab.dart';
 import 'package:scholarsync/features/widgets/lecturer_info.dart';
+import 'package:scholarsync/models/lecturer.dart';
+import 'package:scholarsync/utils/lecturer_repository.dart';
 
 class AcademicStaffPage extends StatefulWidget {
   const AcademicStaffPage({super.key});
@@ -15,13 +18,7 @@ class AcademicStaffPage extends StatefulWidget {
 class _AcademicStaffPageState extends State<AcademicStaffPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  /*int _currentIndex = 0;
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }*/
+  final LecturerService _lecturerService = LecturerService();
 
   @override
   void initState() {
@@ -41,10 +38,10 @@ class _AcademicStaffPageState extends State<AcademicStaffPage>
         frontIcon: IconConstants.leftArrowIcon,
         backIcon: IconConstants.hamburgerMenuIcon,
         onFrontIconButtonpressed: () {
-          /* Navigator.push(
+            Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const LogInPage()),
-          );*/
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
         },
         onBackIconButtonpressed: () {
           /* Navigator.push(
@@ -61,89 +58,64 @@ class _AcademicStaffPageState extends State<AcademicStaffPage>
             child: TabBarView(
               controller: _tabController,
               children: [
-                ListView(
-                  children: const [
-                    LecturerInformation(
-                      name: 'Lecturer 1',
-                      email: 'lecturer1@example.com',
-                      //have to add the images
-                      photoAsset: 'assets/lecturer1.jpg',
-                    ),
-                    LecturerInformation(
-                      name: 'Lecturer 2',
-                      email: 'lecturer2@example.com',
-                      //have to add the images
-                      photoAsset: 'assets/lecturer2.jpg',
-                    ),
-                    LecturerInformation(
-                      name: 'Lecturer 1',
-                      email: 'lecturer1@example.com',
-                      //have to add the images
-                      photoAsset: 'assets/lecturer1.jpg',
-                    ),
-                    // Add more lecturer information boxes for department 1
-                  ],
+                // Add FutureBuilder for the first tab (DS).
+                FutureBuilder<List<Lecturer>>(
+                  future: _lecturerService.getLecturers('DS'),
+                  builder: (context, snapshot) {
+                    return buildTabContent(snapshot);
+                  },
                 ),
-                ListView(
-                  children: const [
-                    LecturerInformation(
-                      name: 'Lecturer 3',
-                      email: 'lecturer3@example.com',
-                      //have to add the images
-                      photoAsset: 'assets/lecturer3.jpg',
-                    ),
-                    LecturerInformation(
-                      name: 'Lecturer 4',
-                      email: 'lecturer4@example.com',
-                      //have to add the images
-                      photoAsset: 'assets/lecturer4.jpg',
-                    ),
-                    // Add more lecturer information boxes for department 2
-                  ],
+                // Add FutureBuilder for the second tab (NS).
+                FutureBuilder<List<Lecturer>>(
+                  future: _lecturerService.getLecturers('NS'),
+                  builder: (context, snapshot) {
+                    return buildTabContent(snapshot);
+                  },
                 ),
-                ListView(
-                  children: const [
-                    LecturerInformation(
-                      name: 'Lecturer 5',
-                      email: 'lecturer5@example.com',
-                      //have to add the images
-                      photoAsset: 'assets/lecturer5.jpg',
-                    ),
-                    LecturerInformation(
-                      name: 'Lecturer 6',
-                      email: 'lecturer6@example.com',
-                      //have to add the images
-                      photoAsset: 'assets/lecturer6.jpg',
-                    ),
-                    // Add more lecturer information boxes for department 3
-                  ],
+                // Add FutureBuilder for the third tab (IS).
+                FutureBuilder<List<Lecturer>>(
+                  future: _lecturerService.getLecturers('IS'),
+                  builder: (context, snapshot) {
+                    return buildTabContent(snapshot);
+                  },
                 ),
-                ListView(
-                  children: const [
-                    LecturerInformation(
-                      name: 'Lecturer 7',
-                      email: 'lecturer7@example.com',
-                      //have to add the images
-                      photoAsset: 'assets/lecturer7.jpg',
-                    ),
-                    LecturerInformation(
-                      name: 'Lecturer 8',
-                      email: 'lecturer8@example.com',
-                      //have to add the images
-                      photoAsset: 'assets/lecturer8.jpg',
-                    ),
-                    // Add more lecturer information boxes for department 4
-                  ],
+                // Add FutureBuilder for the fourth tab (CSSE).
+                FutureBuilder<List<Lecturer>>(
+                  future: _lecturerService.getLecturers('CSSE'),
+                  builder: (context, snapshot) {
+                    return buildTabContent(snapshot);
+                  },
                 ),
               ],
-            ),
+            ), 
           ),
         ],
       ),
-     /* bottomNavigationBar: MyBottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTabTapped: _onTabTapped,
-      ),*/
     );
+  }
+
+  // Helper method to build tab content.
+  Widget buildTabContent(AsyncSnapshot<List<Lecturer>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      return Text('Error: ${snapshot.error}');
+    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+      return const Text('No lecturers found.');
+    } else {
+      final lecturers = snapshot.data!;
+      return ListView.builder(
+        itemCount: lecturers.length,
+        itemBuilder: (context, index) {
+          final lecturer = lecturers[index];
+          return LecturerInformation(
+            id: lecturer.id,
+            name: lecturer.name,
+            email: lecturer.email,
+            imageUrl: lecturer.imageUrl, 
+          );
+        },
+      );
+    }
   }
 }

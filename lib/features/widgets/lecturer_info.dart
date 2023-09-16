@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:scholarsync/theme/palette.dart';
 
 class LecturerInformation extends StatelessWidget {
+  final String id;
   final String name;
   final String email;
-  final String photoAsset;
+  final String imageUrl;
 
-  const LecturerInformation({
-    super.key,
+  const LecturerInformation({super.key, 
+    required this.id,
     required this.name,
     required this.email,
-    required this.photoAsset,
+    required this.imageUrl,
   });
 
   @override
@@ -24,8 +25,9 @@ class LecturerInformation extends StatelessWidget {
         boxShadow: const [
           BoxShadow(
             color: PaletteLightMode.shadowColor,
-            offset: Offset(2, 4),
-            blurRadius: 10.0,
+            offset: Offset(8, 8),
+            blurRadius: 24,
+            spreadRadius: 0,
           ),
         ],
       ),
@@ -38,8 +40,7 @@ class LecturerInformation extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
               image: DecorationImage(
-                //have to add the image
-                image: AssetImage(photoAsset),
+                image: AssetImage(imageUrl),
                 fit: BoxFit.cover,
               ),
             ),

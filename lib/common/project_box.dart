@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
+//import 'package:flutter_svg/svg.dart';
+//import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/theme/palette.dart';
 
 class ProjectBox extends StatelessWidget {
+  final String id;
   final String projectNumber;
   final String projectName;
   final String date;
   final String githubLink;
+  final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   const ProjectBox({
     Key? key,
+    required this.id,
     required this.projectNumber,
     required this.projectName,
     required this.date,
     required this.githubLink,
+    required this.onDelete,
+    required this.onEdit,
   }) : super(key: key);
 
   @override
@@ -31,16 +39,15 @@ class ProjectBox extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
+       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              //have to add a icon into icon folder
-              const Icon(Icons.folder),//icon: SvgPicture.asset(IconConstants.folderIcon),
-              Text('Project $projectNumber'),
-              const Icon(Icons.more_horiz),
+             // SvgPicture.asset(IconConstants.projectManagementIcon),
+              Text(projectNumber),
+             // SvgPicture.asset(IconConstants.horizontalDotsIcon),
             ],
           ),
           const SizedBox(height: 20),
@@ -55,17 +62,14 @@ class ProjectBox extends StatelessWidget {
           const Spacer(),
           Row(
             children: [
-              
               const SizedBox(width: 0.5),
               SizedBox(
-                width: 60, 
-                height: 20,
-                child: Text(
-                  date, 
-                  style: const TextStyle(
-                    fontSize: 11),
-                    )
-                    ),
+                  width: 60,
+                  height: 20,
+                  child: Text(
+                    date,
+                    style: const TextStyle(fontSize: 11),
+                  )),
               const Spacer(),
               Container(
                 width: 50,
@@ -74,28 +78,24 @@ class ProjectBox extends StatelessWidget {
                   shape: BoxShape.rectangle,
                   color: PaletteLightMode.secondaryGreenColor,
                   borderRadius: BorderRadius.circular(7),
-                
                 ),
                 child: const Padding(
-                  padding:  EdgeInsets.only(left: 2,right: 2),
-                  child:  Center(
+                  padding: EdgeInsets.only(left: 2, right: 2),
+                  child: Center(
                     child: Text(
-                              'GitHub',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: PaletteLightMode.whiteColor
-                              ),
-                            ),
+                      'GitHub',
+                      style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: PaletteLightMode.whiteColor),
+                    ),
                   ),
                 ),
               ),
             ],
-          ),          
+          ),
         ],
       ),
     );
   }
 }
-
-
