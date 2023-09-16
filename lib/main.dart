@@ -42,6 +42,14 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  //darkmode
+  ThemeMode _themeMode = ThemeMode.light;
+  void changeTheme(ThemeMode themeMode) {
+    setState(() {
+      _themeMode = themeMode;
+    });
+  }
+
   int _selectedPageIndex = 0;
 
   void _onNavBarItemSelected(int index) {
@@ -52,10 +60,13 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
+
     return CalendarControllerProvider(
       controller: EventController(),
       child: MaterialApp(
         theme: AppThemeLight.theme,
+        darkTheme: AppThemeDark.theme,
+        themeMode: _themeMode,
         debugShowCheckedModeBanner: false,
         home: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),

@@ -17,11 +17,14 @@ class AppThemeLight{
 
 class AppThemeDark{
   static ThemeData theme = ThemeData.dark().copyWith(
-    scaffoldBackgroundColor: PaletteLightMode.backgroundColor,
+    scaffoldBackgroundColor:PaletteDarkMode.backgroundColor,
+     colorScheme: const ColorScheme.dark(primary:PaletteDarkMode.primaryGreenColor),
 
     appBarTheme: const AppBarTheme(
       backgroundColor: PaletteLightMode.backgroundColor,
       elevation: 0,
     ),
+
+    
   );
 }
