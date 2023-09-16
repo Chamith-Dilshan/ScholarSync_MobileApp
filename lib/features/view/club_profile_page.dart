@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scholarsync/features/widgets/carousel.dart';
 import 'package:scholarsync/features/widgets/circular_icon_button.dart';
@@ -8,6 +9,8 @@ import 'package:scholarsync/theme/palette.dart';
 import '../../common/custom_elevated_button.dart';
 import '../../common/reusable_form_dialog.dart';
 import '../../common/text_form_field.dart';
+import '../../models/club.dart';
+import '../../utils/club_repository.dart';
 import '../widgets/club_text_container.dart';
 
 class ClubProfilePage extends StatefulWidget {
@@ -18,12 +21,46 @@ class ClubProfilePage extends StatefulWidget {
 }
 
 class _ClubProfilePageState extends State<ClubProfilePage> {
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final ClubRepository _clubRepository = ClubRepository();
+
   bool isOwner = false;
-  String clubName = 'AIESEC in NSBM';
-  String about =
-      'AIESEC is the world’s largest youth led organization advocating for youth leadership through global affairs. AIESEC in NSBM has over 90+ active global-minded and culturally sensitive members from across the island. As an Ofﬁcial Expansion, we have won the Most Outstanding Award and Most Progressive Expansion Award in 2018 & 2019, respectively.';
-  String masterInCharge = 'Ms. Gimhani Ranagalla\nMs. Dilki Hansika';
-  String president = 'Sachin Hettiarachchi';
+  String clubName = '';
+  String about = '';
+  String masterInCharge = '';
+  String president = '';
+  String profileImageURL =
+      'https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg';
+  String bannerImageURL =
+      'https://w7.pngwing.com/pngs/869/370/png-transparent-low-polygon-background-green-banner-low-poly-materialized-flat-thumbnail.png';
+
+  void checkClubExist() async {
+    final bool isClubExist = await _clubRepository.doesClubExist(uid);
+    setState(() {
+      isOwner = isClubExist;
+    });
+  }
+
+  void getClubData() async {
+    final Club? club = await _clubRepository.getClubById(uid);
+    if (club != null) {
+      setState(() {
+        clubName = club.name!;
+        about = club.about!;
+        masterInCharge = club.inCharge!;
+        president = club.president!;
+        profileImageURL = club.profileImageURL!;
+        bannerImageURL = club.bannerImageURL!;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    checkClubExist();
+    getClubData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,8 +201,8 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
   Widget _buildImageBanner() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Image.asset(
-        ImageConstants.clubBanner1,
+      child: Image.network(
+        bannerImageURL,
         fit: BoxFit.cover,
       ),
     );
@@ -184,9 +221,9 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
             shape: BoxShape.circle,
             color: Colors.white,
           ),
-          child: const Center(
+          child: Center(
             child: CircleAvatar(
-              backgroundImage: AssetImage(ImageConstants.clubDP1),
+              backgroundImage: NetworkImage(profileImageURL),
               radius: imageSize / 2,
             ),
           ),
