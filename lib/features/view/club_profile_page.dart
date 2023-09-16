@@ -20,11 +20,12 @@ class ClubProfilePage extends StatefulWidget {
   State<ClubProfilePage> createState() => _ClubProfilePageState();
 }
 
-class _ClubProfilePageState extends State<ClubProfilePage> {
-  final uid = FirebaseAuth.instance.currentUser!.uid;
-  final ClubRepository _clubRepository = ClubRepository();
+final ClubRepository _clubRepository = ClubRepository();
+final uid = FirebaseAuth.instance.currentUser!.uid;
 
+class _ClubProfilePageState extends State<ClubProfilePage> {
   bool isOwner = false;
+  String id = '';
   String clubName = '';
   String about = '';
   String masterInCharge = '';
@@ -42,17 +43,16 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
   }
 
   void getClubData() async {
-    final Club? club = await _clubRepository.getClubById(uid);
-    if (club != null) {
-      setState(() {
-        clubName = club.name!;
-        about = club.about!;
-        masterInCharge = club.inCharge!;
-        president = club.president!;
-        profileImageURL = club.profileImageURL!;
-        bannerImageURL = club.bannerImageURL!;
-      });
-    }
+    final Club club = await _clubRepository.getClubById(uid);
+    setState(() {
+      id = club.id!;
+      clubName = club.name!;
+      about = club.about!;
+      masterInCharge = club.inCharge!;
+      president = club.president!;
+      profileImageURL = club.profileImageURL!;
+      bannerImageURL = club.bannerImageURL!;
+    });
   }
 
   @override
@@ -73,88 +73,107 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
         backIcon: IconConstants.hamburgerMenuIcon,
         onBackIconButtonpressed: () {},
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              _buildImageBannerWithCircularImage(),
-              Text(
-                clubName,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: PaletteLightMode.textColor,
-                ),
+      body: FutureBuilder<Club>(
+        future: _clubRepository.getClubById(uid),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // While data is loading
+            return const Center(
+              child: CircularProgressIndicator(
+                color: PaletteLightMode.secondaryGreenColor,
               ),
-              const SizedBox(height: 11),
-              if (isOwner)
-                CustomElevatedButton(
-                  label: 'Edit Profile',
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                  textSize: 10,
-                  onPressed: () {
-                    _showFormDialog(context);
-                  },
-                  height: 20,
-                  backgroundColor: PaletteLightMode.secondaryGreenColor,
-                ),
-              const SizedBox(height: 20),
-              CustomTextContainer(
-                heading: 'About',
-                text: about,
-                headingSize: 16.0,
-              ),
-              const SizedBox(height: 15),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: CustomTextContainer(
-                      heading: 'Master/Mistress in Charge',
-                      headingSize: 12.0,
-                      text: masterInCharge,
+            );
+          } else if (snapshot.hasError) {
+            // If there's an error
+            return Text('Error: ${snapshot.error}');
+          } else {
+            // If data is loaded successfully
+            final club = snapshot.data;
+            return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    _buildImageBannerWithCircularImage(),
+                    Text(
+                      club!.name!,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: PaletteLightMode.textColor,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: CustomTextContainer(
-                      heading: 'President',
-                      headingSize: 12.0,
-                      text: president,
+                    const SizedBox(height: 11),
+                    if (isOwner)
+                      CustomElevatedButton(
+                        label: 'Edit Profile',
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 0),
+                        textSize: 10,
+                        onPressed: () {
+                          _showFormDialog(context, club);
+                        },
+                        height: 20,
+                        backgroundColor: PaletteLightMode.secondaryGreenColor,
+                      ),
+                    const SizedBox(height: 20),
+                    CustomTextContainer(
+                      heading: 'About',
+                      text: about,
+                      headingSize: 16.0,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Upcoming Events by $clubName',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: PaletteLightMode.textColor,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-              Carousel(
-                  imageList: const [
-                    ImageConstants.aiesec1,
-                    ImageConstants.aiesec2,
-                    ImageConstants.aiesec3,
+                    const SizedBox(height: 15),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: CustomTextContainer(
+                            heading: 'Master/Mistress in Charge',
+                            headingSize: 12.0,
+                            text: masterInCharge,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: CustomTextContainer(
+                            heading: 'President',
+                            headingSize: 12.0,
+                            text: president,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Upcoming Events by $clubName',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: PaletteLightMode.textColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Carousel(
+                        imageList: const [
+                          ImageConstants.aiesec1,
+                          ImageConstants.aiesec2,
+                          ImageConstants.aiesec3,
+                        ],
+                        autoScrolling: isOwner ? false : true,
+                        showIconButton: isOwner ? true : false,
+                        onPressedDeleteButton: () {
+                          //delete button logic
+                        }),
                   ],
-                  autoScrolling: isOwner ? false : true,
-                  showIconButton: isOwner ? true : false,
-                  onPressedDeleteButton: () {
-                    //delete button logic
-                  }),
-            ],
-          ),
-        ),
+                ),
+              ),
+            );
+          }
+        },
       ),
     );
   }
@@ -245,7 +264,14 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
   }
 }
 
-void _showFormDialog(BuildContext context) {
+void _showFormDialog(BuildContext context, Club club) {
+  TextEditingController aboutController =
+      TextEditingController(text: club.about);
+  TextEditingController inChargeController =
+      TextEditingController(text: club.inCharge);
+  TextEditingController presidentController =
+      TextEditingController(text: club.president);
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -254,6 +280,7 @@ void _showFormDialog(BuildContext context) {
         buttonLabel: 'Save',
         formFields: [
           ReusableTextField(
+            controller: aboutController,
             labelText: 'About',
             isMultiline: true,
             validator: (value) {
@@ -265,6 +292,7 @@ void _showFormDialog(BuildContext context) {
             onSaved: (value) {},
           ),
           ReusableTextField(
+            controller: inChargeController,
             labelText: 'Master/Mistress in Charge',
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -275,6 +303,7 @@ void _showFormDialog(BuildContext context) {
             onSaved: (value) {},
           ),
           ReusableTextField(
+            controller: presidentController,
             labelText: 'President',
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -285,7 +314,25 @@ void _showFormDialog(BuildContext context) {
             onSaved: (value) {},
           ),
         ],
-        onSubmit: (formData) {},
+        onSubmit: (formData) async {
+          print(club.id);
+
+          // Update the club properties
+          club.about = aboutController.text;
+          club.inCharge = inChargeController.text;
+          club.president = presidentController.text;
+
+          // Update the club in the repository
+          try {
+            await _clubRepository.updateClub(club);
+          } catch (e) {
+            print(club.id);
+          }
+
+          aboutController.dispose();
+          inChargeController.dispose();
+          presidentController.dispose();
+        },
       );
     },
   );

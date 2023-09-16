@@ -5,12 +5,11 @@ class Club {
   final String? uid;
   final String? email;
   final String? name;
-  final String? about;
-  final String? inCharge;
-  final String? president;
-  final String? profileImageURL;
-  final String? bannerImageURL;
-  final String? image;
+  String? about;
+  String? inCharge;
+  String? president;
+  String? profileImageURL;
+  String? bannerImageURL;
 
   Club({
     this.id,
@@ -22,7 +21,6 @@ class Club {
     this.president,
     this.profileImageURL,
     this.bannerImageURL,
-    this.image,
   });
 
   factory Club.fromSnapshot(DocumentSnapshot snapshot) {
@@ -38,7 +36,6 @@ class Club {
       president: snapshotData['president'],
       profileImageURL: snapshotData['profileImageURL'],
       bannerImageURL: snapshotData['bannerImageURL'],
-      image: snapshotData['image'],
     );
   }
 
@@ -52,6 +49,5 @@ class Club {
         'president': president,
         'profileImageURL': profileImageURL,
         'bannerImageURL': bannerImageURL,
-        'image': image,
       };
 }

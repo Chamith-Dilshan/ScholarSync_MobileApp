@@ -30,7 +30,7 @@ class ClubRepository {
     }
   }
 
-  Future<Club?> getClubById(String uid) async {
+  Future<Club> getClubById(String uid) async {
     try {
       final QuerySnapshot querySnapshot = await _firestore
           .collection('clubs')
@@ -40,11 +40,11 @@ class ClubRepository {
       if (querySnapshot.docs.isNotEmpty) {
         return Club.fromSnapshot(querySnapshot.docs.first);
       } else {
-        return null;
+        return "" as Club;
       }
     } catch (error) {
       // print("Error fetching club: $error");
-      return null;
+      return "" as Club;
     }
   }
 
