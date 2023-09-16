@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:scholarsync/features/widgets/carousel.dart';
 import 'package:scholarsync/features/widgets/circular_icon_button.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
@@ -53,6 +57,71 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
       profileImageURL = club.profileImageURL!;
       bannerImageURL = club.bannerImageURL!;
     });
+  }
+
+  Future<File?> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      return File(pickedFile.path);
+    }
+    return null;
+  }
+
+  Future<void> _uploadImage(
+    File imageFile,
+    void Function(String) updateImageUrlCallback,
+    String imageUrlField,
+  ) async {
+    final Club club = await _clubRepository.getClubById(uid);
+    String storagePath = '';
+
+    if (imageUrlField == profileImageURL) {
+      storagePath = 'clubs/${club.name}/profileImage';
+    } else if (imageUrlField == bannerImageURL) {
+      storagePath = 'clubs/${club.name}/bannerImage';
+    }
+
+    final storageRef = FirebaseStorage.instance.ref().child(storagePath);
+    final uploadTask = storageRef.putFile(imageFile);
+
+    // Monitor the upload task to get the download URL
+    await uploadTask.whenComplete(() async {
+      final String imageURL = await storageRef.getDownloadURL();
+
+      // Update the image URL field using the callback function
+      updateImageUrlCallback(imageURL);
+
+      // Update the club in the repository
+      if (imageUrlField == club.profileImageURL) {
+        club.profileImageURL = imageURL;
+      } else if (imageUrlField == club.bannerImageURL) {
+        club.bannerImageURL = imageURL;
+      }
+      await _clubRepository.updateClub(club);
+    });
+  }
+
+  Future<void> _updateProfileImage() async {
+    final File? imageFile = await _pickImage();
+    if (imageFile != null) {
+      await _uploadImage(imageFile, (newImageUrl) {
+        setState(() {
+          profileImageURL = newImageUrl;
+        });
+      }, profileImageURL);
+    }
+  }
+
+  Future<void> _updateBannerImage() async {
+    final File? imageFile = await _pickImage();
+    if (imageFile != null) {
+      await _uploadImage(imageFile, (newImageUrl) {
+        setState(() {
+          bannerImageURL = newImageUrl;
+        });
+      }, bannerImageURL);
+    }
   }
 
   @override
@@ -210,7 +279,9 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
               iconAsset: IconConstants.cameraIcon,
               iconColor: PaletteLightMode.whiteColor,
               buttonColor: PaletteLightMode.secondaryGreenColor,
-              onPressed: () {},
+              onPressed: () {
+                _updateBannerImage();
+              },
             ),
           ),
       ],
@@ -218,11 +289,15 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
   }
 
   Widget _buildImageBanner() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Image.network(
-        bannerImageURL,
-        fit: BoxFit.cover,
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: 170,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.network(
+          bannerImageURL,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -256,7 +331,9 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
               iconAsset: IconConstants.cameraIcon,
               iconColor: PaletteLightMode.whiteColor,
               buttonColor: PaletteLightMode.secondaryGreenColor,
-              onPressed: () {},
+              onPressed: () {
+                _updateProfileImage();
+              },
             ),
           ),
       ],
@@ -315,7 +392,7 @@ void _showFormDialog(BuildContext context, Club club) {
           ),
         ],
         onSubmit: (formData) async {
-          print(club.id);
+          // print(club.id);
 
           // Update the club properties
           club.about = aboutController.text;
@@ -326,7 +403,7 @@ void _showFormDialog(BuildContext context, Club club) {
           try {
             await _clubRepository.updateClub(club);
           } catch (e) {
-            print(club.id);
+            // print(club.id);
           }
 
           aboutController.dispose();
