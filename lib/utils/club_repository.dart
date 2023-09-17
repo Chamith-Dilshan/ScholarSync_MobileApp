@@ -75,16 +75,6 @@ class ClubRepository {
     return null;
   }
 
-  Future<void> _updateClubEventImageUrls(Club club, String imageUrl) async {
-    if (club.eventImageURLs == null) {
-      club.eventImageURLs = [imageUrl];
-    } else {
-      club.eventImageURLs?.add(imageUrl);
-    }
-
-    await updateClub(club);
-  }
-
   Future<void> uploadEventImage(String uid) async {
     Club club = await getClubById(uid);
     try {
@@ -92,31 +82,51 @@ class ClubRepository {
       String imageName = eventImage!.path.split('/').last;
       final storagePath = 'clubs/${club.name}/events/$imageName';
       String eventImageURL = await uploadImage(eventImage, storagePath);
-      await _updateClubEventImageUrls(club, eventImageURL);
+
+      // Create a new map for the event data with initial approval status
+      Map<String, dynamic> eventData = {
+        'imageUrl': eventImageURL,
+        'approved': false, // Set the initial approval status to false
+      };
+
+      // Check if club.events is null, and initialize it if needed
+      if (club.events == null) {
+        club.events = [eventData];
+      } else {
+        club.events!.add(eventData);
+      }
+
+      await updateClub(club);
     } catch (error) {
-      // print("Error uploading image: $error");
+      // Handle errors
     }
   }
 
-  Future<void> deleteEventImage(String uid, String imageUrl) async {
+  Future<void> deleteEventImage(String uid, int eventIndex) async {
     try {
       // Get the club document by UID
       Club club = await getClubById(uid);
 
-      if (club.eventImageURLs != null &&
-          club.eventImageURLs!.contains(imageUrl)) {
+      // Check if club.events is not null and contains the event to delete
+      if (club.events != null &&
+          eventIndex >= 0 &&
+          eventIndex < club.events!.length) {
+        // Get the event data at the specified index
+        Map<String, dynamic> eventData = club.events![eventIndex];
+
         // Delete the image from Firebase Storage
+        final imageUrl = eventData['imageUrl'];
         final storageRef = FirebaseStorage.instance.refFromURL(imageUrl);
         await storageRef.delete();
 
-        // Remove the URL from the eventImageURLs list
-        club.eventImageURLs!.remove(imageUrl);
+        // Remove the event data from the club's events list
+        club.events!.removeAt(eventIndex);
 
         // Update the club document in Firestore to reflect the changes
         await updateClub(club);
       }
     } catch (error) {
-      // print('Error deleting event image: $error');
+      // Handle errors
     }
   }
 }

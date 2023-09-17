@@ -53,7 +53,10 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
       president = club.president!;
       profileImageURL = club.profileImageURL!;
       bannerImageURL = club.bannerImageURL!;
-      eventImages = club.eventImageURLs!;
+      eventImages = club.events
+              ?.map<String>((event) => event['imageUrl'] as String)
+              .toList() ??
+          [];
     });
   }
 
@@ -175,7 +178,7 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
                       children: [
                         Expanded(
                           child: CustomTextContainer(
-                            heading: 'Master/Mistress in Charge',
+                            heading: 'In Charge',
                             headingSize: 12.0,
                             text: masterInCharge,
                           ),
@@ -205,21 +208,25 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
                           : const SizedBox(),
                     ),
                     const SizedBox(height: 15),
-                    if (eventImages != [])
-                      Carousel(
-                        imageList: eventImages,
-                        autoScrolling: isOwner ? false : true,
-                        showIconButton: isOwner ? true : false,
-                        onPressedDeleteButton: (int index, String imageUrl) {
-                          if (index >= 0 && index < eventImages.length) {
-                            setState(() {
-                              eventImages.removeAt(index);
-                            });
+                    eventImages.isNotEmpty
+                        ? Carousel(
+                            imageList: eventImages,
+                            autoScrolling: isOwner ? false : true,
+                            showIconButton: isOwner ? true : false,
+                            onPressedDeleteButton:
+                                (int index, String imageUrl) {
+                              if (index >= 0 && index < eventImages.length) {
+                                setState(() {
+                                  eventImages.removeAt(index);
+                                });
 
-                            _clubRepository.deleteEventImage(uid, imageUrl);
-                          }
-                        },
-                      ),
+                                _clubRepository.deleteEventImage(uid, index);
+                              }
+                            },
+                            onPressedRequestButton:
+                                (int index, String imageUrl) {},
+                          )
+                        : Container(),
                   ],
                 ),
               ),

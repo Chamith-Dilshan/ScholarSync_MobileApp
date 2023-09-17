@@ -2,20 +2,23 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/features/widgets/circular_icon_button.dart';
+import '../../common/custom_elevated_button.dart';
 import '../../theme/palette.dart';
 
 class Carousel extends StatefulWidget {
   final List<String> imageList;
   final bool autoScrolling;
   final bool showIconButton;
-  final Function(int index, String imageUrl) onPressedDeleteButton;
+  final Function(int eventIndex, String imageUrl)? onPressedDeleteButton;
+  final Function(int eventIndex, String imageUrl)? onPressedRequestButton;
 
   const Carousel({
     super.key,
     this.imageList = const [],
     this.autoScrolling = true,
     this.showIconButton = false,
-    required this.onPressedDeleteButton,
+    this.onPressedDeleteButton,
+    this.onPressedRequestButton,
   });
 
   @override
@@ -135,18 +138,39 @@ class _CarouselState extends State<Carousel> {
                             Positioned(
                               top: 20,
                               right: 20,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: CircularIconButton(
-                                  buttonSize: 25,
-                                  iconAsset: IconConstants.deleteIcon,
-                                  iconColor: PaletteLightMode.whiteColor,
-                                  buttonColor: PaletteLightMode.primaryRedColor,
-                                  onPressed: () {
-                                    widget.onPressedDeleteButton(
-                                        pageNo, imagesList[pageNo]);
-                                  },
-                                ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: CustomElevatedButton(
+                                      label: 'Request',
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 0, vertical: 0),
+                                      textSize: 10,
+                                      height: 20,
+                                      backgroundColor:
+                                          PaletteLightMode.secondaryGreenColor,
+                                      onPressed: () {
+                                        widget.onPressedRequestButton!(
+                                            pageNo, imagesList[pageNo]);
+                                      },
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: CircularIconButton(
+                                      buttonSize: 25,
+                                      iconAsset: IconConstants.deleteIcon,
+                                      iconColor: PaletteLightMode.whiteColor,
+                                      buttonColor:
+                                          PaletteLightMode.primaryRedColor,
+                                      onPressed: () {
+                                        widget.onPressedDeleteButton!(
+                                            pageNo, imagesList[pageNo]);
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                         ]),
