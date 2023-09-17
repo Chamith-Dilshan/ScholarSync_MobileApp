@@ -207,12 +207,19 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
                     const SizedBox(height: 15),
                     if (eventImages != [])
                       Carousel(
-                          imageList: eventImages,
-                          autoScrolling: isOwner ? false : true,
-                          showIconButton: isOwner ? true : false,
-                          onPressedDeleteButton: () {
-                            //delete button logic
-                          }),
+                        imageList: eventImages,
+                        autoScrolling: isOwner ? false : true,
+                        showIconButton: isOwner ? true : false,
+                        onPressedDeleteButton: (int index, String imageUrl) {
+                          if (index >= 0 && index < eventImages.length) {
+                            setState(() {
+                              eventImages.removeAt(index);
+                            });
+
+                            _clubRepository.deleteEventImage(uid, imageUrl);
+                          }
+                        },
+                      ),
                   ],
                 ),
               ),

@@ -2,14 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/features/widgets/circular_icon_button.dart';
-import '../../constants/image_constants.dart';
 import '../../theme/palette.dart';
 
 class Carousel extends StatefulWidget {
   final List<String> imageList;
   final bool autoScrolling;
   final bool showIconButton;
-  final VoidCallback onPressedDeleteButton;
+  final Function(int index, String imageUrl) onPressedDeleteButton;
 
   const Carousel({
     super.key,
@@ -69,119 +68,114 @@ class _CarouselState extends State<Carousel> {
       ...widget.imageList
     ]; // Use the provided imageList
 
-    // Provide default images if the list is empty
-    if (imagesList.isEmpty) {
-      imagesList = [
-        ImageConstants.img1,
-        ImageConstants.img1,
-        ImageConstants.img1,
-        ImageConstants.img1,
-        ImageConstants.img1,
-      ];
-    }
-
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.5,
-      child: Column(
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.width * 0.9,
-            width: MediaQuery.of(context).size.width * 0.9,
-            child: PageView.builder(
-              controller: _pageController,
-              physics: const BouncingScrollPhysics(),
-              onPageChanged: (index) {
-                pageNo = index;
-                setState(() {});
-              },
-              itemBuilder: (_, index) {
-                return AnimatedBuilder(
-                  animation: _pageController,
-                  builder: (context, child) {
-                    double currentPageValue = 0;
-                    if (_pageController.position.haveDimensions) {
-                      currentPageValue = _pageController.page ??
-                          _pageController.initialPage.toDouble();
-                    }
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 25),
+        child: Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.width * 0.9,
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: PageView.builder(
+                controller: _pageController,
+                physics: const BouncingScrollPhysics(),
+                onPageChanged: (index) {
+                  pageNo = index;
+                  setState(() {});
+                },
+                itemBuilder: (_, index) {
+                  return AnimatedBuilder(
+                    animation: _pageController,
+                    builder: (context, child) {
+                      double currentPageValue = 0;
+                      if (_pageController.position.haveDimensions) {
+                        currentPageValue = _pageController.page ??
+                            _pageController.initialPage.toDouble();
+                      }
 
-                    // Calculate the scale based on the current page
-                    final distance = (index - currentPageValue).abs();
-                    final scale = 1 - (distance * 0.1);
+                      // Calculate the scale based on the current page
+                      final distance = (index - currentPageValue).abs();
+                      final scale = 1 - (distance * 0.1);
 
-                    return GestureDetector(
-                      onTap: () {},
-                      onPanDown: (d) {
-                        if (enableTaprecognizer) {
-                          carouselTimer?.cancel();
-                          carouselTimer = null;
-                        }
-                      },
-                      onPanCancel: () {
-                        if (enableTaprecognizer) {
-                          carouselTimer = getTimer();
-                        }
-                      },
-                      child: Stack(children: [
-                        Center(
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.linear,
-                            width:
-                                scale * MediaQuery.of(context).size.width * 0.8,
-                            height:
-                                scale * MediaQuery.of(context).size.width * 0.8,
-                            margin: const EdgeInsets.all(10),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                imagesList[index],
-                                fit: BoxFit.cover,
+                      return GestureDetector(
+                        onTap: () {},
+                        onPanDown: (d) {
+                          if (enableTaprecognizer) {
+                            carouselTimer?.cancel();
+                            carouselTimer = null;
+                          }
+                        },
+                        onPanCancel: () {
+                          if (enableTaprecognizer) {
+                            carouselTimer = getTimer();
+                          }
+                        },
+                        child: Stack(children: [
+                          Center(
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.linear,
+                              width: scale *
+                                  MediaQuery.of(context).size.width *
+                                  0.8,
+                              height: scale *
+                                  MediaQuery.of(context).size.width *
+                                  0.8,
+                              margin: const EdgeInsets.all(10),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  imagesList[index],
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        if (widget.showIconButton)
-                          Positioned(
-                            top: 20,
-                            right: 20,
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: CircularIconButton(
-                                buttonSize: 25,
-                                iconAsset: IconConstants.deleteIcon,
-                                iconColor: PaletteLightMode.whiteColor,
-                                buttonColor: PaletteLightMode.primaryRedColor,
-                                onPressed: widget.onPressedDeleteButton,
+                          if (widget.showIconButton)
+                            Positioned(
+                              top: 20,
+                              right: 20,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: CircularIconButton(
+                                  buttonSize: 25,
+                                  iconAsset: IconConstants.deleteIcon,
+                                  iconColor: PaletteLightMode.whiteColor,
+                                  buttonColor: PaletteLightMode.primaryRedColor,
+                                  onPressed: () {
+                                    widget.onPressedDeleteButton(
+                                        pageNo, imagesList[pageNo]);
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                      ]),
-                    );
-                  },
-                );
-              },
-              itemCount: imagesList.length,
+                        ]),
+                      );
+                    },
+                  );
+                },
+                itemCount: imagesList.length,
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              imagesList.length,
-              (index) => Container(
-                margin: const EdgeInsets.all(10),
-                width: 5,
-                child: Icon(
-                  Icons.circle,
-                  size: 10,
-                  color: pageNo == index
-                      ? PaletteLightMode.secondaryGreenColor
-                      : PaletteLightMode.secondaryTextColor,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                imagesList.length,
+                (index) => Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 6),
+                  width: 5,
+                  child: Icon(
+                    Icons.circle,
+                    size: 10,
+                    color: pageNo == index
+                        ? PaletteLightMode.secondaryGreenColor
+                        : PaletteLightMode.secondaryTextColor,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

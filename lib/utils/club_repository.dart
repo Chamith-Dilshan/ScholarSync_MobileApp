@@ -97,4 +97,26 @@ class ClubRepository {
       // print("Error uploading image: $error");
     }
   }
+
+  Future<void> deleteEventImage(String uid, String imageUrl) async {
+    try {
+      // Get the club document by UID
+      Club club = await getClubById(uid);
+
+      if (club.eventImageURLs != null &&
+          club.eventImageURLs!.contains(imageUrl)) {
+        // Delete the image from Firebase Storage
+        final storageRef = FirebaseStorage.instance.refFromURL(imageUrl);
+        await storageRef.delete();
+
+        // Remove the URL from the eventImageURLs list
+        club.eventImageURLs!.remove(imageUrl);
+
+        // Update the club document in Firestore to reflect the changes
+        await updateClub(club);
+      }
+    } catch (error) {
+      // print('Error deleting event image: $error');
+    }
+  }
 }
