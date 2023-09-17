@@ -10,6 +10,7 @@ class Club {
   String? president;
   String? profileImageURL;
   String? bannerImageURL;
+  List<String>? eventImageURLs;
 
   Club({
     this.id,
@@ -21,6 +22,7 @@ class Club {
     this.president,
     this.profileImageURL,
     this.bannerImageURL,
+    this.eventImageURLs,
   });
 
   factory Club.fromSnapshot(DocumentSnapshot snapshot) {
@@ -36,6 +38,7 @@ class Club {
       president: snapshotData['president'],
       profileImageURL: snapshotData['profileImageURL'],
       bannerImageURL: snapshotData['bannerImageURL'],
+      eventImageURLs: List<String>.from(snapshotData['eventImageURLs'] ?? []),
     );
   }
 
@@ -49,5 +52,6 @@ class Club {
         'president': president,
         'profileImageURL': profileImageURL,
         'bannerImageURL': bannerImageURL,
+        'eventImageURLs': eventImageURLs,
       };
 }
