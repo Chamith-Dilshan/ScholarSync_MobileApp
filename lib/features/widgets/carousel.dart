@@ -109,9 +109,7 @@ class _CarouselState extends State<Carousel> {
                     final scale = 1 - (distance * 0.1);
 
                     return GestureDetector(
-                      onTap: () {
-                        
-                      },
+                      onTap: () {},
                       onPanDown: (d) {
                         if (enableTaprecognizer) {
                           carouselTimer?.cancel();
@@ -135,7 +133,7 @@ class _CarouselState extends State<Carousel> {
                             margin: const EdgeInsets.all(10),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
+                              child: Image.network(
                                 imagesList[index],
                                 fit: BoxFit.cover,
                               ),

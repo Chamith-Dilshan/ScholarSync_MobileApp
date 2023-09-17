@@ -1,14 +1,10 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:scholarsync/features/widgets/carousel.dart';
 import 'package:scholarsync/features/widgets/circular_icon_button.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
-import 'package:scholarsync/constants/image_constants.dart';
 import 'package:scholarsync/theme/palette.dart';
 import '../../common/custom_elevated_button.dart';
 import '../../common/reusable_form_dialog.dart';
@@ -38,6 +34,7 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
       'https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg';
   String bannerImageURL =
       'https://w7.pngwing.com/pngs/869/370/png-transparent-low-polygon-background-green-banner-low-poly-materialized-flat-thumbnail.png';
+  List<String> eventImages = [];
 
   void checkUserIsClub() async {
     final bool isUserClub = await _clubRepository.checkIfUserIsClub(uid);
@@ -56,6 +53,7 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
       president = club.president!;
       profileImageURL = club.profileImageURL!;
       bannerImageURL = club.bannerImageURL!;
+      eventImages = club.eventImageURLs!;
     });
   }
 
@@ -195,27 +193,26 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
                     const SizedBox(height: 20),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Upcoming Events by $clubName',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: PaletteLightMode.textColor,
-                        ),
-                      ),
+                      child: eventImages.isNotEmpty
+                          ? Text(
+                              'Upcoming Events by $clubName',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: PaletteLightMode.textColor,
+                              ),
+                            )
+                          : const SizedBox(),
                     ),
                     const SizedBox(height: 15),
-                    Carousel(
-                        imageList: const [
-                          ImageConstants.aiesec1,
-                          ImageConstants.aiesec2,
-                          ImageConstants.aiesec3,
-                        ],
-                        autoScrolling: isOwner ? false : true,
-                        showIconButton: isOwner ? true : false,
-                        onPressedDeleteButton: () {
-                          //delete button logic
-                        }),
+                    if (eventImages != [])
+                      Carousel(
+                          imageList: eventImages,
+                          autoScrolling: isOwner ? false : true,
+                          showIconButton: isOwner ? true : false,
+                          onPressedDeleteButton: () {
+                            //delete button logic
+                          }),
                   ],
                 ),
               ),
