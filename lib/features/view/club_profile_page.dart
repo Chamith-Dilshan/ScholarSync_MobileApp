@@ -39,10 +39,10 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
   String bannerImageURL =
       'https://w7.pngwing.com/pngs/869/370/png-transparent-low-polygon-background-green-banner-low-poly-materialized-flat-thumbnail.png';
 
-  void checkClubExist() async {
-    final bool isClubExist = await _clubRepository.doesClubExist(uid);
+  void checkUserIsClub() async {
+    final bool isUserClub = await _clubRepository.checkIfUserIsClub(uid);
     setState(() {
-      isOwner = isClubExist;
+      isOwner = isUserClub;
     });
   }
 
@@ -59,15 +59,6 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
     });
   }
 
-  Future<File?> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      return File(pickedFile.path);
-    }
-    return null;
-  }
-
   Future<void> _uploadImage(
     File imageFile,
     void Function(String) updateImageUrlCallback,
@@ -82,51 +73,39 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
       storagePath = 'clubs/${club.name}/bannerImage';
     }
 
-    final storageRef = FirebaseStorage.instance.ref().child(storagePath);
-    final uploadTask = storageRef.putFile(imageFile);
+    final String imageURL =
+        await _clubRepository.uploadImage(imageFile, storagePath);
 
-    // Monitor the upload task to get the download URL
-    await uploadTask.whenComplete(() async {
-      final String imageURL = await storageRef.getDownloadURL();
+    // Update the image URL field using the callback function
+    updateImageUrlCallback(imageURL);
 
-      // Update the image URL field using the callback function
-      updateImageUrlCallback(imageURL);
-
-      // Update the club in the repository
-      if (imageUrlField == club.profileImageURL) {
-        club.profileImageURL = imageURL;
-      } else if (imageUrlField == club.bannerImageURL) {
-        club.bannerImageURL = imageURL;
-      }
-      await _clubRepository.updateClub(club);
-    });
-  }
-
-  Future<void> _updateProfileImage() async {
-    final File? imageFile = await _pickImage();
-    if (imageFile != null) {
-      await _uploadImage(imageFile, (newImageUrl) {
-        setState(() {
-          profileImageURL = newImageUrl;
-        });
-      }, profileImageURL);
+    // Update the club in the repository
+    if (imageUrlField == club.profileImageURL) {
+      club.profileImageURL = imageURL;
+    } else if (imageUrlField == club.bannerImageURL) {
+      club.bannerImageURL = imageURL;
     }
+    await _clubRepository.updateClub(club);
   }
 
-  Future<void> _updateBannerImage() async {
-    final File? imageFile = await _pickImage();
+  Future<void> _updateImage(String imageURLField) async {
+    final File? imageFile = await _clubRepository.pickImage();
     if (imageFile != null) {
       await _uploadImage(imageFile, (newImageUrl) {
         setState(() {
-          bannerImageURL = newImageUrl;
+          if (imageURLField == profileImageURL) {
+            profileImageURL = newImageUrl;
+          } else if (imageURLField == bannerImageURL) {
+            bannerImageURL = newImageUrl;
+          }
         });
-      }, bannerImageURL);
+      }, imageURLField);
     }
   }
 
   @override
   void initState() {
-    checkClubExist();
+    checkUserIsClub();
     getClubData();
     super.initState();
   }
@@ -280,7 +259,7 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
               iconColor: PaletteLightMode.whiteColor,
               buttonColor: PaletteLightMode.secondaryGreenColor,
               onPressed: () {
-                _updateBannerImage();
+                _updateImage("bannerImageURL");
               },
             ),
           ),
@@ -332,7 +311,7 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
               iconColor: PaletteLightMode.whiteColor,
               buttonColor: PaletteLightMode.secondaryGreenColor,
               onPressed: () {
-                _updateProfileImage();
+                _updateImage("profileImageURL");
               },
             ),
           ),
