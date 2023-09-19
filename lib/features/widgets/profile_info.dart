@@ -5,7 +5,16 @@ import 'package:scholarsync/constants/image_constants.dart';
 import 'package:scholarsync/theme/palette.dart';
 
 class ProfileInfo extends StatelessWidget {
-  const ProfileInfo({super.key});
+  final String studentName;
+  final String degree;
+  final String batch;
+
+  const ProfileInfo({
+    super.key,
+    required this.studentName,
+    required this.degree,
+    required this.batch,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,25 +62,25 @@ class ProfileInfo extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'ATD Gamage - 24598',
-                  style: TextStyle(
+                Text(
+                  studentName,
+                  style: const TextStyle(
                     fontSize: 20,
                     color: PaletteLightMode.whiteColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
-                  'Bsc.(Hons) in Software Engineering - 24598',
-                  style: TextStyle(
+                Text(
+                  degree,
+                  style: const TextStyle(
                     color: PaletteLightMode.whiteColor,
                     fontSize: 14,
                   ),
                 ),
-                const Text(
-                  'Batch - 21.1',
-                  style: TextStyle(
+                Text(
+                  batch,
+                  style: const TextStyle(
                     color: PaletteLightMode.whiteColor,
                     fontSize: 14,
                   ),
