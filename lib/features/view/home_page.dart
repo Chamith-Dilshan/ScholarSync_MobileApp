@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -87,7 +88,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           ],
         ),
         body: Padding(
-          padding: const EdgeInsets.only(left: 8,right: 8,top: 8,bottom: 0),
+          padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 0),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
@@ -105,15 +106,42 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
 
                 //carousel
-                Carousel(
-                  imageList: const [
-                    ImageConstants.aiesec3,
-                    ImageConstants.aiesec1,
-                    ImageConstants.aiesec2,
-                    ImageConstants.aiesec3,
-                    ImageConstants.aiesec2,
-                  ],
-                  onPressedDeleteButton: () {},
+                StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseFirestore.instance
+                      .collection('posts')
+                      .snapshots(),
+                  builder: (context,
+                      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                          snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text('Error: ${snapshot.error}'),
+                      );
+                    }
+
+                    // Create a list to store the image URLs
+                    List<String> imageUrlList = [];
+
+                    final documents = snapshot.data!.docs;
+
+                    // Extract postUrl from each document and add it to imageUrlList
+                    for (final DocumentSnapshot<Map<String, dynamic>> document
+                        in documents) {
+                      final postUrl = document['postUrl'] as String;
+                      imageUrlList.add(postUrl);
+                    }
+
+                    //return the widget containing postUrls from Firestore
+                    return Carousel(
+                      imageList: imageUrlList,
+                    );
+                  },
                 ),
                 const SizedBox(
                   height: 5,
@@ -132,16 +160,52 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
 
                 //imageRow
+                // StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                //   stream: FirebaseFirestore.instance
+                //       .collection('kuppiSessions')
+                //       .snapshots(),
+                //   builder: (context,
+                //       AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                //           snapshot) {
+                //     if (snapshot.connectionState == ConnectionState.waiting) {
+                //       return const Center(
+                //         child: CircularProgressIndicator(),
+                //       );
+                //     }
+
+                //     if (snapshot.hasError) {
+                //       return Center(
+                //         child: Text('Error: ${snapshot.error}'),
+                //       );
+                //     }
+
+                //     // Create a list to store the image URLs
+                //     List<String> imageUrlList = [];
+
+                //     final documents = snapshot.data!.docs;
+
+                //     // Extract postUrl from each document and add it to imageUrlList
+                //     for (final DocumentSnapshot<Map<String, dynamic>> document
+                //         in documents) {
+                //       final postUrl = document['imageUrl'] as String;
+                //       imageUrlList.add(postUrl);
+                //     }
+
+                //     //return the widget containing postUrls from Firestore
+                //     return ImageRow(
+                //         containerSize: MediaQuery.of(context).size.width * 0.4,
+                //         isCircle: false,
+                //         imagePathList: imageUrlList);
+                //   },
+                // ),
                 ImageRow(
-                  containerSize: MediaQuery.of(context).size.width * 0.4,
-                  isCircle: false,
-                  imagePathList: const [
-                    ImageConstants.img1,
-                    ImageConstants.img1,
-                    ImageConstants.img1,
-                    ImageConstants.img1,
-                  ],
-                ),
+                    containerSize: MediaQuery.of(context).size.width * 0.4,
+                    isCircle: false,
+                    imagePathList: const [
+                      ImageConstants.aiesec1,
+                      ImageConstants.aiesec2,
+                      ImageConstants.aiesec3
+                    ]),
                 const SizedBox(
                   height: 5,
                 ),
@@ -163,11 +227,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                   containerSize: MediaQuery.of(context).size.width * 0.2,
                   isCircle: true,
                   imagePathList: const [
-                    ImageConstants.img1,
-                    ImageConstants.img1,
-                    ImageConstants.img1,
-                    ImageConstants.img1,
-                    ImageConstants.img1,
+                    ImageConstants.loginBackgroundImage,
+                    ImageConstants.loginBackgroundImage,
+                    ImageConstants.loginBackgroundImage,
+                    ImageConstants.loginBackgroundImage,
+                    ImageConstants.loginBackgroundImage,
                   ],
                   textList: const [
                     'club0',

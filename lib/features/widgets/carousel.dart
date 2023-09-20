@@ -126,9 +126,11 @@ class _CarouselState extends State<Carousel> {
                               margin: const EdgeInsets.all(10),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
-                                child: Image.network(
-                                  imagesList[index],
-                                  fit: BoxFit.cover,
+                                child: Image(
+                                  image: NetworkImage(
+                                    imagesList[index],
+                                  ),
+                                  fit: BoxFit.contain,
                                 ),
                               ),
                             ),

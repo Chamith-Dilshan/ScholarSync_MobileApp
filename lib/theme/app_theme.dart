@@ -17,8 +17,8 @@ class AppThemeLight{
 
 class AppThemeDark{
   static ThemeData theme = ThemeData.dark().copyWith(
-    scaffoldBackgroundColor:PaletteDarkMode.backgroundColor,
-     colorScheme: const ColorScheme.dark(primary:PaletteDarkMode.primaryGreenColor),
+    scaffoldBackgroundColor:PaletteDarktMode.backgroundColor,
+     colorScheme: const ColorScheme.dark(primary:PaletteLightMode.primaryGreenColor),
 
     appBarTheme: const AppBarTheme(
       backgroundColor: PaletteLightMode.backgroundColor,

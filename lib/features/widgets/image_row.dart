@@ -23,13 +23,15 @@ class ImageRow extends StatelessWidget {
       child: Row(
         children: List.generate(
           imagePathList.length,
-          (index) => _buildImageContainer(imagePathList[index], containerSize, textList != null ? textList![index]:null),
+          (index) => _buildImageContainer(imagePathList[index], containerSize,
+              textList != null ? textList![index] : null),
         ),
       ),
     );
   }
 
-  Widget _buildImageContainer(String imagePath, double containerWidth, String? textString) {
+  Widget _buildImageContainer(
+      String imagePath, double containerWidth, String? textString) {
     return Column(
       children: [
         Container(
@@ -38,28 +40,34 @@ class ImageRow extends StatelessWidget {
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
-            border: Border.all(color: PaletteLightMode.backgroundColor, width: 0),
+            border:
+                Border.all(color: PaletteLightMode.backgroundColor, width: 0),
           ),
           child: ClipRRect(
-            borderRadius: isCircle ? BorderRadius.circular(containerWidth / 2) : BorderRadius.circular(10),
-            child: Image.asset(
+            borderRadius: isCircle
+                ? BorderRadius.circular(containerWidth / 2)
+                : BorderRadius.circular(10),
+                child: Image.asset(
               imagePath,
               fit: BoxFit.cover,
             ),
+            // child: Image(
+            //   image: NetworkImage(
+            //     imagePath,
+            //   ),
+            //   fit: BoxFit.cover,
+            // ),
           ),
         ),
-
-        if(textString != null)
+        if (textString != null)
           Text(
             textString,
             style: const TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w500,
-
             ),
           )
       ],
     );
   }
 }
-
