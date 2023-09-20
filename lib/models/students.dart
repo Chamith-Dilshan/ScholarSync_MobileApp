@@ -1,3 +1,5 @@
+// user_profile_model.dart
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Student {
@@ -13,7 +15,7 @@ class Student {
     required this.batch,
   });
 
-  factory Student.fromSnapshot(DocumentSnapshot snapshot) {
+  factory Student.fromJson(DocumentSnapshot snapshot) {
     final snapshotData = snapshot.data() as Map<String, dynamic>;
 
     return Student(
