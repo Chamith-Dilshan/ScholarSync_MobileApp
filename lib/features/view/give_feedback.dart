@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:scholarsync/common/sidebar.dart';
+import 'package:scholarsync/constants/icon_constants.dart';
+import 'package:scholarsync/features/widgets/drawer_menu.dart';
 // import 'package:scholarsync/common/nav_bar.dart';
 import '../../theme/palette.dart';
 
@@ -16,11 +19,14 @@ class FeedbackFormState extends State<FeedbackForm> {
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: PaletteLightMode.backgroundColor,
-      endDrawer:  const Sidebar(),
+      endDrawer:  const CustomDrawerMenu(),
       appBar: AppBar(
         title: const Text(
           'Give Feedback',
@@ -32,6 +38,23 @@ class FeedbackFormState extends State<FeedbackForm> {
         backgroundColor: PaletteLightMode.backgroundColor,
         elevation: 0,
         centerTitle: true,
+        actions: <Widget>[
+            IconButton(
+              icon: SvgPicture.asset(
+                IconConstants.hamburgerMenuIcon,
+                colorFilter: const ColorFilter.mode(
+                  PaletteLightMode.secondaryGreenColor,
+                  BlendMode.srcIn,
+                ),
+                width: 40,
+                height: 40,
+              ),
+              tooltip: 'Menu',
+              onPressed: () {
+                _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
+              },
+            ),
+          ],
       ),
       body: SingleChildScrollView(
         child: Form(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/features/view/login_page.dart';
+import 'package:scholarsync/features/widgets/drawer_menu.dart';
 import 'package:scholarsync/theme/palette.dart';
 import 'package:scholarsync/common/custom_textfield.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
@@ -13,7 +14,10 @@ class SettingsPage extends StatelessWidget {
 const SettingsPage({Key? key}) : super(key: key);
 @override
   Widget build(BuildContext context) {
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey(); // Create a global key for the Scaffold
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: const CustomDrawerMenu(),
       appBar: UIConstants.appBar(
         title: 'Settings',
         fontSize: 22,
@@ -29,10 +33,7 @@ const SettingsPage({Key? key}) : super(key: key);
           );
         },
         onBackIconButtonpressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const LogInPage()),
-          );
+          _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
         },
       ),
        backgroundColor: PaletteLightMode.backgroundColor,

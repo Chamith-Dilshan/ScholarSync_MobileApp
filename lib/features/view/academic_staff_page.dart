@@ -4,6 +4,7 @@ import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
 import 'package:scholarsync/features/view/home_page.dart';
 import 'package:scholarsync/features/widgets/academic_staff_page_tab.dart';
+import 'package:scholarsync/features/widgets/drawer_menu.dart';
 import 'package:scholarsync/features/widgets/lecturer_info.dart';
 import 'package:scholarsync/models/lecturer.dart';
 import 'package:scholarsync/utils/lecturer_repository.dart';
@@ -19,6 +20,7 @@ class _AcademicStaffPageState extends State<AcademicStaffPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final LecturerService _lecturerService = LecturerService();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   void initState() {
@@ -29,7 +31,8 @@ class _AcademicStaffPageState extends State<AcademicStaffPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer:  const Sidebar(),
+      key: _scaffoldKey,
+      endDrawer:  const CustomDrawerMenu(),
       appBar: UIConstants.appBar(
         title: 'Academic Staff',
         fontSize: 22,
@@ -44,10 +47,7 @@ class _AcademicStaffPageState extends State<AcademicStaffPage>
           );
         },
         onBackIconButtonpressed: () {
-          /* Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const LogInPage()),
-          );*/
+          _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
         },
       ),
       body: Column(

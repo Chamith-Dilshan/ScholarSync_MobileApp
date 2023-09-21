@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:scholarsync/common/project_box.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
+import 'package:scholarsync/features/widgets/drawer_menu.dart';
 import 'package:scholarsync/features/widgets/profile_info.dart';
 import 'package:scholarsync/theme/palette.dart';
 
@@ -13,10 +13,13 @@ class MyProfilePage extends StatefulWidget {
 }
 
 class _MyProfilePageState extends State<MyProfilePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey(); // Create a global key for the Scaffold
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: const CustomDrawerMenu(),
       appBar: UIConstants.appBar(
         title: 'My Profile',
         fontSize: 22,
@@ -24,10 +27,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
         titleCenter: false,
         backIcon: IconConstants.hamburgerMenuIcon,
         onBackIconButtonpressed: () {
-          /* Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const LogInPage()),
-          );*/
+          _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
         },
       ),
     body: Column(

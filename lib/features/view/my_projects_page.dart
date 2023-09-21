@@ -9,6 +9,7 @@ import 'package:scholarsync/common/text_form_field.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
 import 'package:scholarsync/features/view/home_page.dart';
+import 'package:scholarsync/features/widgets/drawer_menu.dart';
 import 'package:scholarsync/models/projects.dart';
 import 'package:scholarsync/theme/palette.dart';
 import 'package:scholarsync/utils/project_repository.dart';
@@ -30,6 +31,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
   final _nameController = TextEditingController();
   final _dateController = TextEditingController();
   final _githubLinkController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey(); // Create a global key for the Scaffold
 
   String formatDate(DateTime date) {
     return DateFormat.yMMMMd().format(date);
@@ -86,6 +88,8 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: const CustomDrawerMenu(),
         appBar: UIConstants.appBar(
         title: 'My Projects',
         fontSize: 22,
@@ -100,10 +104,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
           );
         },
         onBackIconButtonpressed: () {
-          /* Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const LogInPage()),
-          );*/
+         _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
         },
       ),
         body: Column(

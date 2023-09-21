@@ -5,6 +5,7 @@ import 'package:scholarsync/features/widgets/carousel.dart';
 import 'package:scholarsync/features/widgets/circular_icon_button.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
+import 'package:scholarsync/features/widgets/drawer_menu.dart';
 import 'package:scholarsync/theme/palette.dart';
 import '../../common/custom_elevated_button.dart';
 import '../../common/reusable_form_dialog.dart';
@@ -35,6 +36,7 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
   String bannerImageURL =
       'https://w7.pngwing.com/pngs/869/370/png-transparent-low-polygon-background-green-banner-low-poly-materialized-flat-thumbnail.png';
   List<String> eventImages = [];
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   void checkUserIsClub() async {
     final bool isUserClub = await _clubRepository.checkIfUserIsClub(uid);
@@ -114,13 +116,17 @@ class _ClubProfilePageState extends State<ClubProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: const CustomDrawerMenu(),
       appBar: UIConstants.appBar(
         title: clubName,
         fontSize: 22,
         fontWeight: FontWeight.bold,
         titleCenter: false,
         backIcon: IconConstants.hamburgerMenuIcon,
-        onBackIconButtonpressed: () {},
+        onBackIconButtonpressed: () {
+          _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
+        },
       ),
       body: FutureBuilder<Club>(
         future: _clubRepository.getClubById(uid),

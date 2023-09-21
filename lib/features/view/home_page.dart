@@ -6,6 +6,7 @@ import 'package:scholarsync/common/search_bar.dart';
 import 'package:scholarsync/common/sidebar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/image_constants.dart';
+import 'package:scholarsync/features/widgets/drawer_menu.dart';
 import 'package:scholarsync/main.dart';
 import '../../common/text_container.dart';
 import '../../theme/palette.dart';
@@ -20,11 +21,14 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey(); // Create a global key for the Scaffold
+
   @override
   Widget build(BuildContext context) {
     return ref.watch(userStreamProvider).when(data: (userData) {
       return Scaffold(
-        endDrawer: const Sidebar(),
+        key: _scaffoldKey,
+        endDrawer: const CustomDrawerMenu(),
         appBar: AppBar(
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +86,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
               tooltip: 'Menu',
               onPressed: () {
-                //Open the Sidebar
+                _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
               },
             ),
           ],

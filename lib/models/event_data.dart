@@ -1,12 +1,13 @@
 import 'package:calendar_view/calendar_view.dart';
 import 'package:scholarsync/theme/palette.dart';
 
-final List<CalendarEventData> eventdata = [
+
+final List<CalendarEventData> caleventdata = [
     CalendarEventData(
       date: DateTime.now(),
       event: "Event 1",
       title: "Event meeting 1",
-      description: "Today is Event meeting 1.",
+      description: "Today is Event meeting 1\n from 5.30 to 8.00",
       color: PaletteLightMode.primaryGreenColor,
       startTime: DateTime(2023, 9, 1, 5, 30),
       endTime: DateTime(2023, 9, 1, 8),

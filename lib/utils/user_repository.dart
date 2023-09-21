@@ -16,6 +16,7 @@ class UserRepository {
           username: '',
           uid: '',
           email: '',
+          imageUrl: '',
         );
       }
     });

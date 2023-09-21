@@ -4,17 +4,20 @@ class UserRepo{
   final String username;
   final String uid;
   final String email;
+  final String imageUrl;
 
   const UserRepo({
     required this.username,
     required this.uid,
     required this.email,
+    required this.imageUrl,
   });
 
   Map<String,dynamic> toJson() => {
     'username': username,
     'uid': uid,
     'email': email,
+    'imageUrl': imageUrl,
   };
 
   static UserRepo fromSnap(DocumentSnapshot snap){
@@ -24,6 +27,7 @@ class UserRepo{
       username: snapshot['username'], 
       uid: snapshot['uid'], 
       email: snapshot['email'], 
+      imageUrl: snapshot['imageUrl'],
     );
   }
 }

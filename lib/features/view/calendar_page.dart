@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
+import 'package:scholarsync/features/widgets/drawer_menu.dart';
 import 'package:scholarsync/theme/palette.dart';
 import 'package:scholarsync/models/event_data.dart';
 
@@ -16,11 +17,12 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   DateFormat monthYearFormat = DateFormat('dd MMMM yyyy');
   EventController eventController = EventController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    eventController.addAll(eventdata);
+    eventController.addAll(caleventdata);
   }
 
   @override
@@ -32,6 +34,8 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: const CustomDrawerMenu(),
       appBar: UIConstants.appBar(
           title: 'Calendar',
           fontSize: 22,
@@ -39,7 +43,7 @@ class _CalendarPageState extends State<CalendarPage> {
           titleCenter: false,
           backIcon: IconConstants.hamburgerMenuIcon,
           onBackIconButtonpressed: () {
-            //Icon funtion
+            _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
           }
       ),
       body: DayView(
