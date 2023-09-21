@@ -35,7 +35,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
         children: [
          const Padding(
             padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-            child: ProfileInfo(),
+            child: ProfileInfo(studentName: 'H.W.Hansani', degree: 'Bsc (Hons) in Software Engineering', batch: '21.1',),
           ),
           const SizedBox(height: 11),
           Padding(
