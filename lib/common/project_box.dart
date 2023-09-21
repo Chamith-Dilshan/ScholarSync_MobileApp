@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter_svg/svg.dart';
-//import 'package:scholarsync/constants/icon_constants.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/theme/palette.dart';
 
 class ProjectBox extends StatelessWidget {
@@ -25,8 +25,8 @@ class ProjectBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   return Container(
-    padding: const EdgeInsets.all(15),
+    return Container(
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: PaletteLightMode.backgroundColor,
         borderRadius: BorderRadius.circular(8),
@@ -39,15 +39,15 @@ class ProjectBox extends StatelessWidget {
           ),
         ],
       ),
-       child: Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-             // SvgPicture.asset(IconConstants.projectManagementIcon),
+              SvgPicture.asset(IconConstants.projectManagementIcon),
               Text(projectNumber),
-             // SvgPicture.asset(IconConstants.horizontalDotsIcon),
+              SvgPicture.asset(IconConstants.horizontalDotsIcon),
             ],
           ),
           const SizedBox(height: 20),
