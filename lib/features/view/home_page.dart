@@ -6,6 +6,8 @@ import 'package:scholarsync/common/search_bar.dart';
 import 'package:scholarsync/common/sidebar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/image_constants.dart';
+import 'package:scholarsync/features/view/club_profile_page.dart';
+import 'package:scholarsync/features/view/kuppi_page.dart';
 import 'package:scholarsync/features/widgets/drawer_menu.dart';
 import 'package:scholarsync/main.dart';
 import '../../common/text_container.dart';
@@ -156,7 +158,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                   fontText: 'Kuppi Sessions',
                   secondText: 'view all',
                   onTap: () {
-                    //onTap funtion for the text
+                    Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const KuppiPage()));
                   },
                 ),
                 const SizedBox(
@@ -206,9 +209,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                     containerSize: MediaQuery.of(context).size.width * 0.4,
                     isCircle: false,
                     imagePathList: const [
-                      ImageConstants.aiesec1,
-                      ImageConstants.aiesec2,
-                      ImageConstants.aiesec3
+                      ImageConstants.kuppi2,
+                      ImageConstants.kuppi3,
+                      ImageConstants.kuppi4,
+                      ImageConstants.kuppi1,
                     ]),
                 const SizedBox(
                   height: 5,
@@ -219,7 +223,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                   fontText: 'Clubs & Organizations',
                   secondText: 'view all',
                   onTap: () {
-                    //onTap funtion for the text
+                    Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const ClubProfilePage()));
                   },
                 ),
                 const SizedBox(
@@ -231,18 +236,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                   containerSize: MediaQuery.of(context).size.width * 0.2,
                   isCircle: true,
                   imagePathList: const [
-                    ImageConstants.loginBackgroundImage,
-                    ImageConstants.loginBackgroundImage,
-                    ImageConstants.loginBackgroundImage,
-                    ImageConstants.loginBackgroundImage,
-                    ImageConstants.loginBackgroundImage,
+                    ImageConstants.club1,
+                    ImageConstants.club2,
+                    ImageConstants.club3,
+                    ImageConstants.club4,
+                    ImageConstants.clubDP1,
                   ],
                   textList: const [
-                    'club0',
-                    'club1',
-                    'club2',
-                    'club3',
-                    'club4',
+                    'InnovaTech Club',
+                    'HackShield Club',
+                    'DevApp Club',
+                    'GamersGuide Club',
+                    'Men Club',
                   ],
                 ),
                 const SizedBox(
