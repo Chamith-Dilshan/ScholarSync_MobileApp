@@ -9,6 +9,7 @@ import 'package:scholarsync/common/text_form_field.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
 import 'package:scholarsync/features/view/home_page.dart';
+import 'package:scholarsync/features/view/my_profile_page.dart';
 import 'package:scholarsync/models/projects.dart';
 import 'package:scholarsync/theme/palette.dart';
 import 'package:scholarsync/utils/project_repository.dart';
@@ -86,7 +87,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: UIConstants.appBar(
+      appBar: UIConstants.appBar(
         title: 'My Projects',
         fontSize: 22,
         fontWeight: FontWeight.w600,
@@ -96,7 +97,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
         onFrontIconButtonpressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
+            MaterialPageRoute(builder: (context) => const MyProfilePage()),
           );
         },
         onBackIconButtonpressed: () {
@@ -106,19 +107,18 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
           );*/
         },
       ),
-        body: Column(
-          children: [
-            CustomSearchBar(
-              hint: 'Search for projects...',
-              onSearchSubmitted: (query) {
-                setState(() {
-                    _searchQuery = query.trim();
-                  });
-                  FocusScope.of(context).unfocus();
-              },
-            ),
-
-            Expanded(
+      body: Column(
+        children: [
+          CustomSearchBar(
+            hint: 'Search for projects...',
+            onSearchSubmitted: (query) {
+              setState(() {
+                _searchQuery = query.trim();
+              });
+              FocusScope.of(context).unfocus();
+            },
+          ),
+          Expanded(
             child: FutureBuilder<List<Project>>(
               future: _projectService.getProject(),
               builder: (context, snapshot) {
@@ -139,7 +139,8 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
                 } else {
                   final filteredProjects = _filterProjects(snapshot.data!);
                   return GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 20.0,
                       crossAxisSpacing: 25.0,
@@ -178,7 +179,6 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
     );
   }
 
-
   Widget _buildAddProjectBox() {
     return Container(
       decoration: BoxDecoration(
@@ -210,7 +210,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
             icon: SvgPicture.asset(
               IconConstants.addButtonIcon,
               color: PaletteLightMode.whiteColor,
-              ),
+            ),
             tooltip: 'Add Project',
             onPressed: () {
               _showFormDialog(context);
@@ -221,7 +221,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
     );
   }
 
- void _showFormDialog(BuildContext context, {Project? project}) {
+  void _showFormDialog(BuildContext context, {Project? project}) {
     final isEditing = project != null;
 
     if (isEditing) {
@@ -232,11 +232,11 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
       _resetFormFields();
     }
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return ReusableFormDialog(
-        title: isEditing ? 'Edit Project' : 'Add New Project',
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ReusableFormDialog(
+          title: isEditing ? 'Edit Project' : 'Add New Project',
           buttonLabel: isEditing ? 'Save' : 'Add',
           formFields: [
             ReusableTextField(
