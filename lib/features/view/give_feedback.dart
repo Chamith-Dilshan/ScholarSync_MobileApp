@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:scholarsync/common/sidebar.dart';
-import 'package:scholarsync/constants/icon_constants.dart';
-import 'package:scholarsync/features/widgets/drawer_menu.dart';
+//import 'package:scholarsync/common/sidebar.dart';
 // import 'package:scholarsync/common/nav_bar.dart';
 import '../../theme/palette.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FeedbackForm extends StatefulWidget {
+class FeedbackForm extends StatefulWidget{
   const FeedbackForm({super.key});
 
   @override
@@ -16,17 +14,15 @@ class FeedbackForm extends StatefulWidget {
 class FeedbackFormState extends State<FeedbackForm> {
   final _formKey = GlobalKey<FormState>();
   int? _selectedIndex;
+  //
+  String? _selectedFeedback;
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       backgroundColor: PaletteLightMode.backgroundColor,
-      endDrawer:  const CustomDrawerMenu(),
       appBar: AppBar(
         title: const Text(
           'Give Feedback',
@@ -38,23 +34,6 @@ class FeedbackFormState extends State<FeedbackForm> {
         backgroundColor: PaletteLightMode.backgroundColor,
         elevation: 0,
         centerTitle: true,
-        actions: <Widget>[
-            IconButton(
-              icon: SvgPicture.asset(
-                IconConstants.hamburgerMenuIcon,
-                colorFilter: const ColorFilter.mode(
-                  PaletteLightMode.secondaryGreenColor,
-                  BlendMode.srcIn,
-                ),
-                width: 40,
-                height: 40,
-              ),
-              tooltip: 'Menu',
-              onPressed: () {
-                _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
-              },
-            ),
-          ],
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -198,10 +177,20 @@ class FeedbackFormState extends State<FeedbackForm> {
                             height: 31.91,
                             child: ElevatedButton(
                               onPressed: () {
-                                if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+                                if (_formKey.currentState != null && _formKey.currentState!.validate() && _selectedFeedback != null) {
                                   ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(content: Text('Processing Data')));
+                                      .showSnackBar(const SnackBar(content: Text('Process Sucessful')));
+                                       FirebaseFirestore.instance.collection('feedback').add({
+                                  'emotion': _selectedFeedback,
+                                  'text1': _controller1.text,
+                                  'text2': _controller2.text,
+                                  'text3': _controller3.text
+                                });
+                                }else{
+                                  ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(content: Text('Please select emotion of your mind!')));
                                 }
+                               
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
@@ -230,6 +219,7 @@ class FeedbackFormState extends State<FeedbackForm> {
         onPressed: (){
           setState(() {
             _selectedIndex = index;
+            _selectedFeedback=text;
           });
         },
           style: ElevatedButton.styleFrom(
