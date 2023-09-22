@@ -6,6 +6,7 @@ import 'package:scholarsync/features/view/academic_staff_page.dart';
 import 'package:scholarsync/features/view/calendar_page.dart';
 import 'package:scholarsync/features/view/give_feedback.dart';
 import 'package:scholarsync/features/view/home_page.dart';
+import 'package:scholarsync/features/view/login_page.dart';
 import 'package:scholarsync/features/view/my_profile_page.dart';
 import 'package:scholarsync/features/view/settings_page.dart';
 import 'package:scholarsync/main.dart';
@@ -86,7 +87,7 @@ void _launchPlayStore() async {
               ontap: () {
                 Navigator.pop(context);
                 Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const HomePage()));
+                    MaterialPageRoute(builder: (context) => const MyProfilePage()));
               },
             ),
             ListTitleWidget(
@@ -139,7 +140,7 @@ void _launchPlayStore() async {
               ontap: () {
                 Navigator.pop(context);
                 Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const HomePage()));
+                    MaterialPageRoute(builder: (context) => const LogInPage()));
               },
             ),
           ],

@@ -27,10 +27,7 @@ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey(); // Create a global ke
         frontIcon: IconConstants.leftArrowIcon,
         frontIconToolTip: 'go to the next page',
         onFrontIconButtonpressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const LogInPage()),
-          );
+         
         },
         onBackIconButtonpressed: () {
           _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
