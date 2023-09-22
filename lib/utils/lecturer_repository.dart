@@ -5,26 +5,23 @@ import 'package:scholarsync/models/lecturer.dart';
 
 class LecturerService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
- 
+
   final CollectionReference _lecturersCollection =
       FirebaseFirestore.instance.collection('academicStaff');
 
-  Future<List<Lecturer>> getLecturers(String filter) async {
-  QuerySnapshot querySnapshot;
+  Future<List<Lecturer>> getLecturers(String category) async {
+    try {
+      final QuerySnapshot querySnapshot = await _firestore
+          .collection('academicStaff')
+          .where('category', isEqualTo: category) // Add the filter here
+          .get();
 
-  if (filter == 'DS') {
-    querySnapshot = await _lecturersCollection.where('category', isEqualTo: 'DS').get();
-  } else if (filter == 'NS') {
-    querySnapshot = await _lecturersCollection.where('category', isEqualTo: 'NS').get();
-  } else if (filter == 'CSSE') {
-    querySnapshot = await _lecturersCollection.where('category', isEqualTo: 'CSSE').get();
-  } else if (filter == 'IS') {
-    querySnapshot = await _lecturersCollection.where('category', isEqualTo: 'IS').get();
-  } else {
-    querySnapshot = await _lecturersCollection.get();
+      return querySnapshot.docs
+          .map((doc) => Lecturer.fromSnapshot(doc))
+          .toList();
+    } catch (error) {
+      // Handle the error
+      return [];
+    }
   }
-
-  return querySnapshot.docs.map((doc) => Lecturer.fromSnapshot(doc)).toList();
-}
-
 }
