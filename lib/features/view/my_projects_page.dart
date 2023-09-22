@@ -1,18 +1,18 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
-import 'package:scholarsync/common/project_box.dart';
-import 'package:scholarsync/common/reusable_form_dialog.dart';
-import 'package:scholarsync/common/search_bar.dart';
-import 'package:scholarsync/common/text_form_field.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
-import 'package:scholarsync/constants/ui_constants.dart';
-import 'package:scholarsync/features/view/home_page.dart';
-import 'package:scholarsync/features/widgets/drawer_menu.dart';
-import 'package:scholarsync/models/projects.dart';
 import 'package:scholarsync/theme/palette.dart';
-import 'package:scholarsync/utils/project_repository.dart';
+import 'package:scholarsync/utils/student_repository.dart';
+
+import '../../common/project_box.dart';
+import '../../common/reusable_form_dialog.dart';
+import '../../common/search_bar.dart';
+import '../../common/text_form_field.dart';
+import '../../constants/ui_constants.dart';
+import '../../models/project.dart';
+import '../../utils/date_format.dart';
+import '../widgets/drawer_menu.dart';
+import 'home_page.dart';
 
 void main() {
   runApp(const MyProjectsPage());
@@ -26,63 +26,25 @@ class MyProjectsPage extends StatefulWidget {
 }
 
 class _MyProjectsPageState extends State<MyProjectsPage> {
-  String _searchQuery = '';
-  final ProjectService _projectService = ProjectService();
+  final StudentRepository studentRepository = StudentRepository();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   final _nameController = TextEditingController();
   final _dateController = TextEditingController();
-  final _githubLinkController = TextEditingController();
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey(); // Create a global key for the Scaffold
-
-  String formatDate(DateTime date) {
-    return DateFormat.yMMMMd().format(date);
-  }
+  final _linkController = TextEditingController();
 
   Future<void> createNewProject() async {
     try {
       Project project = Project(
-        id: '',
-        projectName: _nameController.text.trim(),
-        date: DateTime.parse(_dateController.text.trim()),
-        githubLink: _githubLinkController.text.trim(),
-        projectNumber: '',
+        name: _nameController.text,
+        date: DateTime.parse(_dateController.text),
+        link: _linkController.text,
       );
-      await _projectService.createProject(project);
+
+      await StudentRepository.createNewProject(project);
       setState(() {});
     } catch (e) {
-      // Handle the error
+      // print(e);
     }
-  }
-
-  void _handleDelete(Project project) async {
-    await _projectService.deleteProject(project.id);
-    setState(() {});
-  }
-
-  List<Project> _filterProjects(List<Project> projects) {
-    if (_searchQuery.isEmpty) {
-      return projects;
-    } else {
-      final query = _searchQuery.toLowerCase();
-      return projects.where((project) {
-        return project.projectName.toLowerCase().contains(query);
-      }).toList();
-    }
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _dateController.dispose();
-    _githubLinkController.dispose();
-    super.dispose();
-  }
-
-  void _resetFormFields() {
-    setState(() {
-      _nameController.clear();
-      _dateController.clear();
-      _githubLinkController.clear();
-    });
   }
 
   @override
@@ -90,7 +52,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
     return Scaffold(
       key: _scaffoldKey,
       endDrawer: const CustomDrawerMenu(),
-        appBar: UIConstants.appBar(
+      appBar: UIConstants.appBar(
         title: 'My Projects',
         fontSize: 22,
         fontWeight: FontWeight.w600,
@@ -104,93 +66,95 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
           );
         },
         onBackIconButtonpressed: () {
-         _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
+          _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
         },
       ),
-        body: Column(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Column(
           children: [
             CustomSearchBar(
               hint: 'Search for projects...',
-              onSearchSubmitted: (query) {
-                setState(() {
-                    _searchQuery = query.trim();
-                  });
-                  FocusScope.of(context).unfocus();
-              },
+              onSearchSubmitted: (query) {},
+              // Handle search query change
             ),
-
+            const SizedBox(height: 20),
             Expanded(
-            child: FutureBuilder<List<Project>>(
-              future: _projectService.getProject(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: PaletteLightMode.secondaryGreenColor,
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text('Error fetching projects'),
-                  );
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(
-                    child: Text('No projects available'),
-                  );
-                } else {
-                  final filteredProjects = _filterProjects(snapshot.data!);
-                  return GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 20.0,
-                      crossAxisSpacing: 25.0,
-                    ),
-                    itemCount: filteredProjects.length,
-                    itemBuilder: (context, index) {
-                      Project project = filteredProjects[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 25,
-                          vertical: 25,
+              child: FutureBuilder(
+                future: studentRepository.fetchProjectsForStudent(),
+                builder: (context, projectSnapshot) {
+                  if (projectSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: PaletteLightMode.secondaryGreenColor,
+                      ),
+                    );
+                  } else if (projectSnapshot.hasError) {
+                    return Center(child: Text('Error${projectSnapshot.error}'));
+                  } else if (projectSnapshot.data != null &&
+                      projectSnapshot.data!.isNotEmpty) {
+                    final List<Project>? projects = projectSnapshot.data;
+                    return CustomScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.all(0),
+                          sliver: SliverGrid(
+                            gridDelegate:
+                                const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 200.0,
+                              mainAxisSpacing: 20.0,
+                              crossAxisSpacing: 20.0,
+                            ),
+                            delegate: SliverChildBuilderDelegate(
+                              (BuildContext context, int index) {
+                                if (index < projects.length) {
+                                  final project = projects[index];
+                                  return ProjectBox(
+                                    projectNumber: (index + 1).toString(),
+                                    projectName: project.name,
+                                    date: FormatDate.projectformatDate(
+                                        project.date),
+                                    githubLink: project.link,
+                                  );
+                                } else if (index == projects.length) {
+                                  return _buildAddProjectBox();
+                                } else {
+                                  return Container();
+                                }
+                              },
+                              childCount: projects!.length < 4
+                                  ? projects.length + 1
+                                  : 4,
+                            ),
+                          ),
                         ),
-                        child: ProjectBox(
-                          id: project.id,
-                          projectNumber: project.projectNumber,
-                          projectName: project.projectName,
-                          date: formatDate(project.date),
-                          githubLink: project.githubLink,
-                          onDelete: () {
-                            _handleDelete(project);
-                          },
-                          onEdit: () {
-                            _showFormDialog(context, project: project);
-                          },
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
+                      ],
+                    );
+                  } else {
+                    return _buildAddProjectBox();
+                  }
+                },
+              ),
             ),
-          ),
-          _buildAddProjectBox(),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-
   Widget _buildAddProjectBox() {
     return Container(
       decoration: BoxDecoration(
-        color: PaletteLightMode.backgroundColor,
+        color: Theme.of(context).dialogBackgroundColor,
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: PaletteLightMode.shadowColor.withOpacity(0.3),
-            spreadRadius: 2,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: PaletteLightMode.shadowColor,
+            offset: Offset(8, 8),
+            blurRadius: 24,
+            spreadRadius: 0,
           ),
         ],
       ),
@@ -210,9 +174,10 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
           IconButton(
             icon: SvgPicture.asset(
               IconConstants.addButtonIcon,
+              // ignore: deprecated_member_use
               color: PaletteLightMode.whiteColor,
-              ),
-            tooltip: 'Add Project',
+            ),
+            tooltip: 'Increment',
             onPressed: () {
               _showFormDialog(context);
             },
@@ -222,33 +187,38 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
     );
   }
 
- void _showFormDialog(BuildContext context, {Project? project}) {
-    final isEditing = project != null;
+  void _showFormDialog(BuildContext context, {Project? project}) async {
+    bool isEditing = project != null;
 
     if (isEditing) {
-      _nameController.text = project.projectName;
-      _dateController.text = DateFormat('yyyy-MM-dd').format(project.date);
-      _githubLinkController.text = project.githubLink;
+      _nameController.text = project.name;
+      _dateController.text =
+          FormatDate.projectformatDate(DateTime.parse(project.date.toString()));
+      _linkController.text = project.link;
     } else {
-      _resetFormFields();
+      _nameController.clear();
+      _dateController.clear();
+      _linkController.clear();
     }
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return ReusableFormDialog(
-        title: isEditing ? 'Edit Project' : 'Add New Project',
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ReusableFormDialog(
+          title: isEditing ? 'Edit Project' : 'Add New Project',
           buttonLabel: isEditing ? 'Save' : 'Add',
           formFields: [
+            const SizedBox(height: 15),
             ReusableTextField(
               controller: _nameController,
               labelText: 'Project Name',
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter a project name';
+                  return 'Please enter a name';
                 }
                 return null;
               },
+              onSaved: (value) {},
             ),
             ReusableTextField(
               controller: _dateController,
@@ -260,32 +230,27 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
                 }
                 return null;
               },
+              onSaved: (value) {},
             ),
             ReusableTextField(
-              controller: _githubLinkController,
-              labelText: 'GitHub Link',
+              controller: _linkController,
+              labelText: 'Github Link',
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter the GitHub link';
                 }
-                // Add more validation for a valid GitHub link if needed.
+
+                final Uri uri = Uri.parse(value);
+                if (uri.scheme.isEmpty || uri.host.isEmpty) {
+                  return 'Please enter a valid URL';
+                }
                 return null;
               },
+              onSaved: (value) {},
             ),
           ],
           onSubmit: (formData) async {
-            if (isEditing) {
-              // Update the existing project
-              project.projectName = _nameController.text.trim();
-              project.date = DateTime.parse(_dateController.text.trim());
-              project.githubLink = _githubLinkController.text.trim();
-              await _projectService.updateProject(project);
-            } else {
-              // Create a new project
-              await createNewProject();
-            }
-            setState(() {});
-            Navigator.pop(context); // Close the dialog
+            await createNewProject();
           },
         );
       },

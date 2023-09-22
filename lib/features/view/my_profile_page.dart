@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:scholarsync/constants/icon_constants.dart';
-import 'package:scholarsync/constants/ui_constants.dart';
-import 'package:scholarsync/features/widgets/drawer_menu.dart';
-import 'package:scholarsync/features/widgets/profile_info.dart';
 import 'package:scholarsync/theme/palette.dart';
+import 'package:scholarsync/utils/student_repository.dart';
+import '../../common/project_box.dart';
+import '../../constants/icon_constants.dart';
+import '../../constants/ui_constants.dart';
+import '../../models/project.dart';
+import '../../models/student.dart';
+import '../../utils/date_format.dart';
+import '../widgets/drawer_menu.dart';
+import '../widgets/profile_info.dart';
+import 'my_projects_page.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({super.key});
@@ -13,101 +19,159 @@ class MyProfilePage extends StatefulWidget {
 }
 
 class _MyProfilePageState extends State<MyProfilePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey(); // Create a global key for the Scaffold
+  final StudentRepository studentService = StudentRepository();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
+  Future<Student?> _fetchUser() async {
+    final userData = await studentService.fetchStudentData();
+    return userData;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      endDrawer: const CustomDrawerMenu(),
-      appBar: UIConstants.appBar(
-        title: 'My Profile',
-        fontSize: 22,
-        fontWeight: FontWeight.w600,
-        titleCenter: false,
-        backIcon: IconConstants.hamburgerMenuIcon,
-        onBackIconButtonpressed: () {
-          _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
-        },
-      ),
-    body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-         const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-            child: ProfileInfo(studentName: 'H.W.Hansani', degree: 'Bsc (Hons) in Software Engineering', batch: '21.1',),
-          ),
-          const SizedBox(height: 11),
-          Padding(
-            padding: const EdgeInsets.only(left: 25,right: 25),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'My Projects',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+        key: _scaffoldKey,
+        endDrawer: const CustomDrawerMenu(),
+        appBar: UIConstants.appBar(
+          title: 'My Profile',
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          titleCenter: false,
+          backIcon: IconConstants.hamburgerMenuIcon,
+          onBackIconButtonpressed: () {
+            _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
+          },
+        ),
+        body: FutureBuilder(
+            future: _fetchUser(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: PaletteLightMode.secondaryGreenColor,
+                ));
+              } else if (snapshot.hasError) {
+                return const Center(child: Text('Error'));
+              } else {
+                final student = snapshot.data!;
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ProfileInfo(
+                        id: student.id,
+                        profileImageUrl: student.profileImageUrl!,
+                        firstName: student.firstName,
+                        lastName: student.lastName,
+                        degreeProgram: student.degreeProgram,
+                        batch: student.batch,
+                        studentId: student.studentId,
+                      ),
+                      const SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'My Projects',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Route route = MaterialPageRoute(
+                                  builder: (context) => const MyProjectsPage());
+                              Navigator.push(context, route);
+                            },
+                            child: TextButton(
+                              onPressed: () {
+                                Route route = MaterialPageRoute(
+                                    builder: (context) =>
+                                        const MyProjectsPage());
+                                Navigator.push(context, route);
+                              },
+                              child: const Text(
+                                'view all',
+                                style: TextStyle(
+                                  color: PaletteLightMode.textColor,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 15),
+                      Expanded(
+                        child: FutureBuilder(
+                          future: studentService.fetchProjectsForStudent(),
+                          builder: (context, projectSnapshot) {
+                            if (projectSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: PaletteLightMode.secondaryGreenColor,
+                                ),
+                              );
+                            } else if (projectSnapshot.hasError) {
+                              return Center(
+                                  child: Text('Error${projectSnapshot.error}'));
+                            } else if (projectSnapshot.data != null &&
+                                projectSnapshot.data!.isNotEmpty) {
+                              final List<Project>? projects =
+                                  projectSnapshot.data;
+                              return CustomScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                slivers: [
+                                  SliverPadding(
+                                    padding: const EdgeInsets.all(0),
+                                    sliver: SliverGrid(
+                                      gridDelegate:
+                                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                                        maxCrossAxisExtent: 200.0,
+                                        mainAxisSpacing: 20.0,
+                                        crossAxisSpacing: 20.0,
+                                      ),
+                                      delegate: SliverChildBuilderDelegate(
+                                        (BuildContext context, int index) {
+                                          if (index < projects.length) {
+                                            final project = projects[index];
+                                            return ProjectBox(
+                                              projectNumber:
+                                                  (index + 1).toString(),
+                                              projectName: project.name,
+                                              date:
+                                                  FormatDate.projectformatDate(
+                                                      DateTime.parse(project
+                                                          .date
+                                                          .toString())),
+                                              githubLink: project.link,
+                                            );
+                                          } else {
+                                            return Container();
+                                          }
+                                        },
+                                        childCount: projects!.length < 4
+                                            ? projects.length
+                                            : 4,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return const Center(child: Text('No projects'));
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Handle "View All" click
-                  },
-                  child: const Text(
-                    'View All',
-                    style: TextStyle(
-                      color: PaletteLightMode.textColor,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 5),
-          Expanded(
-          child: Padding(
-              padding: const EdgeInsets.only(
-                  left: 5, right: 5, bottom: 25), // Add bottom padding
-              child: Scrollbar(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 18.0,
-                  crossAxisSpacing: 25.0,
-                  padding: const EdgeInsets.only(left: 25, right: 25),
-                  children: const [
-                /*    ProjectBox(
-                      projectNumber: '1',
-                      projectName: 'Project Name 1',
-                      date: '2023-07-23',
-                      githubLink: 'https://github.com/project1',
-                    ),
-                    ProjectBox(
-                      projectNumber: '2',
-                      projectName: 'Project Name 2',
-                      date: '2023-07-24',
-                      githubLink: 'https://github.com/project2',
-                    ),
-                    ProjectBox(
-                      projectNumber: '3',
-                      projectName: 'Project Name 3',
-                      date: '2023-07-25',
-                      githubLink: 'https://github.com/project3',
-                    ),
-                    ProjectBox(
-                      projectNumber: '4',
-                      projectName: 'Project Name 4',
-                      date: '2023-07-26',
-                      githubLink: 'https://github.com/project4',
-                    ),*/
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                );
+              }
+            }));
   }
 }

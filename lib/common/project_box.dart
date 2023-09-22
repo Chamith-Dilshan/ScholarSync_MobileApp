@@ -1,26 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
-import 'package:scholarsync/theme/palette.dart';
+import '../theme/palette.dart';
 
 class ProjectBox extends StatelessWidget {
-  final String id;
   final String projectNumber;
   final String projectName;
   final String date;
   final String githubLink;
-  final VoidCallback onDelete;
-  final VoidCallback onEdit;
 
   const ProjectBox({
     Key? key,
-    required this.id,
     required this.projectNumber,
     required this.projectName,
     required this.date,
     required this.githubLink,
-    required this.onDelete,
-    required this.onEdit,
   }) : super(key: key);
 
   @override
@@ -28,14 +22,14 @@ class ProjectBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: PaletteLightMode.backgroundColor,
+        color: PaletteLightMode.whiteColor,
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: PaletteLightMode.shadowColor.withOpacity(0.3),
-            spreadRadius: 2,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: PaletteDarktMode.shadowColor,
+            offset: Offset(8, 8),
+            blurRadius: 24,
+            spreadRadius: 0,
           ),
         ],
       ),
@@ -46,8 +40,11 @@ class ProjectBox extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SvgPicture.asset(IconConstants.projectManagementIcon),
-              Text(projectNumber),
-              SvgPicture.asset(IconConstants.horizontalDotsIcon),
+              Text('Project $projectNumber'),
+              const Icon(
+                Icons.more_horiz,
+                color: PaletteLightMode.secondaryGreenColor,
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -61,6 +58,7 @@ class ProjectBox extends StatelessWidget {
           ),
           const Spacer(),
           Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               const SizedBox(width: 0.5),
               SizedBox(
