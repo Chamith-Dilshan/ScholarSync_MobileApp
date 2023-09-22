@@ -32,7 +32,7 @@ class _AcademicStaffPageState extends State<AcademicStaffPage>
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer:  const CustomDrawerMenu(),
+      endDrawer: const CustomDrawerMenu(),
       appBar: UIConstants.appBar(
         title: 'Academic Staff',
         fontSize: 22,
@@ -41,7 +41,7 @@ class _AcademicStaffPageState extends State<AcademicStaffPage>
         frontIcon: IconConstants.leftArrowIcon,
         backIcon: IconConstants.hamburgerMenuIcon,
         onFrontIconButtonpressed: () {
-            Navigator.push(
+          Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const HomePage()),
           );
@@ -87,7 +87,7 @@ class _AcademicStaffPageState extends State<AcademicStaffPage>
                   },
                 ),
               ],
-            ), 
+            ),
           ),
         ],
       ),
@@ -112,7 +112,7 @@ class _AcademicStaffPageState extends State<AcademicStaffPage>
             id: lecturer.id,
             name: lecturer.name,
             email: lecturer.email,
-            imageUrl: lecturer.imageUrl, 
+            imageUrl: lecturer.imageUrl,
           );
         },
       );

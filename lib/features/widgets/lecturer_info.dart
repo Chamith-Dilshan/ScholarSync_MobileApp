@@ -7,7 +7,8 @@ class LecturerInformation extends StatelessWidget {
   final String email;
   final String imageUrl;
 
-  const LecturerInformation({super.key, 
+  const LecturerInformation({
+    super.key,
     required this.id,
     required this.name,
     required this.email,
@@ -40,7 +41,7 @@ class LecturerInformation extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
               image: DecorationImage(
-                image: AssetImage(imageUrl),
+                image: NetworkImage(imageUrl),
                 fit: BoxFit.cover,
               ),
             ),
@@ -55,16 +56,13 @@ class LecturerInformation extends StatelessWidget {
               Text(
                 name,
                 style:
-                    const TextStyle(
-                      fontSize: 18, 
-                      fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 6.0),
               Text(
                 email,
                 style: const TextStyle(
-                    fontSize: 14, 
-                    color: PaletteLightMode.secondaryTextColor),
+                    fontSize: 14, color: PaletteLightMode.secondaryTextColor),
               ),
             ],
           ),

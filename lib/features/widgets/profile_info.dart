@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
-import 'package:scholarsync/constants/image_constants.dart';
 import 'package:scholarsync/theme/palette.dart';
+import '../../utils/student_repository.dart';
+import 'circular_icon_button.dart';
 
-class ProfileInfo extends StatelessWidget {
-  final String studentName;
-  final String degree;
+class ProfileInfo extends StatefulWidget {
+  final String firstName;
+  final String lastName;
+  final String degreeProgram;
   final String batch;
+  final String studentId;
+  final String profileImageUrl;
+  final String id;
 
   const ProfileInfo({
     super.key,
-    required this.studentName,
-    required this.degree,
+    required this.firstName,
+    required this.lastName,
+    required this.degreeProgram,
     required this.batch,
+    required this.studentId,
+    required this.profileImageUrl,
+    required this.id,
   });
 
+  @override
+  State<ProfileInfo> createState() => _ProfileInfoState();
+}
+
+class _ProfileInfoState extends State<ProfileInfo> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,63 +42,63 @@ class ProfileInfo extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(8.0),
       ),
-      child: Stack(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Positioned.fill(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    const CircleAvatar(
-                      radius: 50,
-                      //backgroundImage: AssetImage(ImageConstants.profileImage), // Add your image path here
-                    ),
-                    Container(
-                      width: 32, // Set the desired width for the container
-                      height: 32, // Set the desired height for the container
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: PaletteLightMode
-                            .secondaryGreenColor, // Choose the background color you want for the camera icon
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          // Handle camera icon pressed (profile edit page)
-                        },
-                        iconSize: 18, // Set the desired icon size
-                        icon: SvgPicture.asset(IconConstants.cameraIcon),
-                        color: PaletteLightMode.whiteColor,
-                      ),
-                    ),
-                  ],
+          Stack(
+            children: [
+              Container(
+                width: 90,
+                height: 90,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  studentName,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: PaletteLightMode.whiteColor,
-                    fontWeight: FontWeight.bold,
+                child: Center(
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(widget.profileImageUrl),
+                    radius: 90 / 2,
                   ),
                 ),
-                const SizedBox(height: 5),
-                Text(
-                  degree,
-                  style: const TextStyle(
-                    color: PaletteLightMode.whiteColor,
-                    fontSize: 14,
-                  ),
+              ),
+              Positioned(
+                bottom: -(20 / 1000),
+                right: -(20 / 1000),
+                child: CircularIconButton(
+                  buttonSize: 20,
+                  iconAsset: IconConstants.cameraIcon,
+                  iconColor: PaletteLightMode.whiteColor,
+                  buttonColor: PaletteLightMode.secondaryGreenColor,
+                  onPressed: () {
+                    StudentRepository.updateProfileImageURL(
+                        widget.id, widget.studentId);
+                    setState(() {});
+                  },
                 ),
-                Text(
-                  batch,
-                  style: const TextStyle(
-                    color: PaletteLightMode.whiteColor,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            '${widget.firstName} ${widget.lastName} - ${widget.studentId}',
+            style: const TextStyle(
+              fontSize: 20,
+              color: PaletteLightMode.whiteColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            widget.degreeProgram,
+            style: const TextStyle(
+              color: PaletteLightMode.whiteColor,
+              fontSize: 14,
+            ),
+          ),
+          Text(
+            'Batch - ${widget.batch}',
+            style: const TextStyle(
+              color: PaletteLightMode.whiteColor,
+              fontSize: 14,
             ),
           ),
         ],
