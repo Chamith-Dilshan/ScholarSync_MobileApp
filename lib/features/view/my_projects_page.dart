@@ -62,7 +62,7 @@ class _MyProjectsPageState extends State<MyProjectsPage> {
         onFrontIconButtonpressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
+            MaterialPageRoute(builder: (context) => const MyProjectsPage()),
           );
         },
         onBackIconButtonpressed: () {

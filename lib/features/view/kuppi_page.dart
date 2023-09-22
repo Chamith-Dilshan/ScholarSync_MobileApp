@@ -7,6 +7,7 @@ import 'package:scholarsync/common/search_bar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/common/text_form_field.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
+import 'package:scholarsync/features/view/home_page.dart';
 import 'package:scholarsync/features/widgets/drawer_menu.dart';
 import 'package:scholarsync/features/widgets/kuppi_widget.dart';
 import 'package:scholarsync/common/reusable_form_dialog.dart';
@@ -128,7 +129,7 @@ class _KuppiPageState extends State<KuppiPage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        key: _scaffoldKey,
+          key: _scaffoldKey,
           endDrawer: const CustomDrawerMenu(),
           appBar: UIConstants.appBar(
             title: 'Kuppi Sessions',
@@ -138,7 +139,12 @@ class _KuppiPageState extends State<KuppiPage> {
             frontIcon: IconConstants.leftArrowIcon,
             backIcon: IconConstants.hamburgerMenuIcon,
             frontIconToolTip: 'Back to login page',
-            onFrontIconButtonpressed: () {},
+            onFrontIconButtonpressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
+            },
             onBackIconButtonpressed: () {
               _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
             },
