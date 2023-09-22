@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:scholarsync/constants/icon_constants.dart';
+import 'package:scholarsync/constants/ui_constants.dart';
+import 'package:scholarsync/features/widgets/drawer_menu.dart';
 //import 'package:scholarsync/common/sidebar.dart';
 // import 'package:scholarsync/common/nav_bar.dart';
 import '../../theme/palette.dart';
@@ -19,21 +22,23 @@ class FeedbackFormState extends State<FeedbackForm> {
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   final TextEditingController _controller3 = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: const CustomDrawerMenu(),
       backgroundColor: PaletteLightMode.backgroundColor,
-      appBar: AppBar(
-        title: const Text(
-          'Give Feedback',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18, 
-          ),
-          ),
-        backgroundColor: PaletteLightMode.backgroundColor,
-        elevation: 0,
-        centerTitle: true,
+      appBar:  UIConstants.appBar(
+          title: 'Give FeedBack',
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          titleCenter: true,
+          backIcon: IconConstants.hamburgerMenuIcon,
+          onBackIconButtonpressed: () {
+            _scaffoldKey.currentState!.openEndDrawer(); // Open the end drawer
+          }
       ),
       body: SingleChildScrollView(
         child: Form(
