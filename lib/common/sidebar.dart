@@ -4,7 +4,7 @@ import 'package:scholarsync/features/view/settings_page.dart';
 import 'package:scholarsync/features/view/academic_staff_page.dart';
 import 'package:scholarsync/features/view/give_feedback.dart';
 import 'package:scholarsync/features/view/login_page.dart';
-import 'package:scholarsync/resources/auth_methods.dart';
+import 'package:scholarsync/utils/auth_methods.dart';
 
 class Sidebar extends StatefulWidget {
   const Sidebar({Key? key}) : super(key: key);

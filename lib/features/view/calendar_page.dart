@@ -1,11 +1,13 @@
 import 'package:calendar_view/calendar_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/ui_constants.dart';
 import 'package:scholarsync/features/widgets/drawer_menu.dart';
 import 'package:scholarsync/theme/palette.dart';
-import 'package:scholarsync/models/event_data.dart';
+import 'package:scholarsync/utils/calendar_methods.dart';
+
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({Key? key}) : super(key: key);
@@ -18,11 +20,18 @@ class _CalendarPageState extends State<CalendarPage> {
   DateFormat monthYearFormat = DateFormat('dd MMMM yyyy');
   EventController eventController = EventController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final calendarMethods = CalendarMethods();
+  List<CalendarEventData> caleventdata = [];
 
   @override
   void initState() {
     super.initState();
-    eventController.addAll(caleventdata);
+    calendarMethods.fetchEventDataFromFirestore().then((data) {
+    setState(() {
+      caleventdata = data;
+      eventController.addAll(caleventdata);
+    });
+  });
   }
 
   @override
@@ -30,6 +39,7 @@ class _CalendarPageState extends State<CalendarPage> {
     super.dispose();
     eventController.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {

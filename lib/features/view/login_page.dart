@@ -4,7 +4,7 @@ import 'package:scholarsync/features/widgets/rounded_small_button.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
 import 'package:scholarsync/constants/image_constants.dart';
 import 'package:scholarsync/features/widgets/auth_field.dart';
-import 'package:scholarsync/resources/auth_methods.dart';
+import 'package:scholarsync/utils/auth_methods.dart';
 import 'package:scholarsync/theme/palette.dart';
 
 class LogInPage extends StatefulWidget {
