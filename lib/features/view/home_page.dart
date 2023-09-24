@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:scholarsync/common/search_bar.dart';
-import 'package:scholarsync/common/sidebar.dart';
 import 'package:scholarsync/constants/icon_constants.dart';
-import 'package:scholarsync/constants/image_constants.dart';
 import 'package:scholarsync/features/view/club_profile_page.dart';
 import 'package:scholarsync/features/view/kuppi_page.dart';
 import 'package:scholarsync/features/widgets/drawer_menu.dart';
@@ -112,40 +110,24 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
 
                 //carousel
-                StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  stream: FirebaseFirestore.instance
-                      .collection('posts')
-                      .snapshots(),
-                  builder: (context,
-                      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
-                          snapshot) {
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+                  builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const CircularProgressIndicator();
                     }
-
                     if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      );
+                      return Text('Error: ${snapshot.error}');
                     }
-
-                    // Create a list to store the image URLs
-                    List<String> imageUrlList = [];
-
-                    final documents = snapshot.data!.docs;
-
-                    // Extract postUrl from each document and add it to imageUrlList
-                    for (final DocumentSnapshot<Map<String, dynamic>> document
-                        in documents) {
-                      final postUrl = document['postUrl'] as String;
-                      imageUrlList.add(postUrl);
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Text('No images available.');
                     }
-
-                    //return the widget containing postUrls from Firestore
+                    // Extract image URLs from Firestore documents
+                    List<String> imageUrls = snapshot.data!.docs.map((doc) => doc['postUrl'] as String).toList();
+                    
+                    // Render the ImageRow widget with the real-time image URLs
                     return Carousel(
-                      imageList: imageUrlList,
+                      imageList: imageUrls,
                     );
                   },
                 ),
@@ -166,54 +148,30 @@ class _HomePageState extends ConsumerState<HomePage> {
                   height: 5,
                 ),
 
-                //imageRow
-                // StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                //   stream: FirebaseFirestore.instance
-                //       .collection('kuppiSessions')
-                //       .snapshots(),
-                //   builder: (context,
-                //       AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
-                //           snapshot) {
-                //     if (snapshot.connectionState == ConnectionState.waiting) {
-                //       return const Center(
-                //         child: CircularProgressIndicator(),
-                //       );
-                //     }
-
-                //     if (snapshot.hasError) {
-                //       return Center(
-                //         child: Text('Error: ${snapshot.error}'),
-                //       );
-                //     }
-
-                //     // Create a list to store the image URLs
-                //     List<String> imageUrlList = [];
-
-                //     final documents = snapshot.data!.docs;
-
-                //     // Extract postUrl from each document and add it to imageUrlList
-                //     for (final DocumentSnapshot<Map<String, dynamic>> document
-                //         in documents) {
-                //       final postUrl = document['imageUrl'] as String;
-                //       imageUrlList.add(postUrl);
-                //     }
-
-                //     //return the widget containing postUrls from Firestore
-                //     return ImageRow(
-                //         containerSize: MediaQuery.of(context).size.width * 0.4,
-                //         isCircle: false,
-                //         imagePathList: imageUrlList);
-                //   },
-                // ),
-                ImageRow(
-                    containerSize: MediaQuery.of(context).size.width * 0.4,
-                    isCircle: false,
-                    imagePathList: const [
-                      ImageConstants.kuppi2,
-                      ImageConstants.kuppi3,
-                      ImageConstants.kuppi4,
-                      ImageConstants.kuppi1,
-                    ]),
+                //kuppi Section
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance.collection('kuppiSessions').snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    }
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Text('No images available.');
+                    }
+                    // Extract image URLs from Firestore documents
+                    List<String> imageUrls = snapshot.data!.docs.map((doc) => doc['imageUrl'] as String).toList();
+                    
+                    // Render the ImageRow widget with the real-time image URLs
+                    return ImageRow(
+                      containerSize: MediaQuery.of(context).size.width * 0.4,
+                      isCircle: false,
+                      imagePathList: imageUrls, // Use the list of image URLs
+                    );
+                  },
+                ),
                 const SizedBox(
                   height: 5,
                 ),
@@ -231,24 +189,33 @@ class _HomePageState extends ConsumerState<HomePage> {
                   height: 5,
                 ),
 
-                //imageRow
-                ImageRow(
-                  containerSize: MediaQuery.of(context).size.width * 0.2,
-                  isCircle: true,
-                  imagePathList: const [
-                    ImageConstants.club1,
-                    ImageConstants.club2,
-                    ImageConstants.club3,
-                    ImageConstants.club4,
-                    ImageConstants.clubDP1,
-                  ],
-                  textList: const [
-                    'InnovaTech Club',
-                    'HackShield Club',
-                    'DevApp Club',
-                    'GamersGuide Club',
-                    'Men Club',
-                  ],
+                // Clubs
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance.collection('clubs').snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    }
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Text('No images available.');
+                    }
+                    // Extract image URLs from Firestore documents
+                    List<String> imageUrls = snapshot.data!.docs.map((doc) => doc['profileImageURL'] as String).toList();
+                    
+                    // Render the ImageRow widget with the real-time image URLs
+                    return ImageRow(
+                      containerSize: MediaQuery.of(context).size.width * 0.2,
+                      isCircle: true,
+                      imagePathList: imageUrls, // Use the list of image URLs
+                      textList: const [
+                        'InnovaTech Club',
+                        'HackShield Club',
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(
                   height: 10,

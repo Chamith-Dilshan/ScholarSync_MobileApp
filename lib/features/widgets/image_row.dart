@@ -47,16 +47,16 @@ class ImageRow extends StatelessWidget {
             borderRadius: isCircle
                 ? BorderRadius.circular(containerWidth / 2)
                 : BorderRadius.circular(10),
-                child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-            ),
-            // child: Image(
-            //   image: NetworkImage(
-            //     imagePath,
-            //   ),
+            //   child: Image.asset(
+            //   imagePath,
             //   fit: BoxFit.cover,
             // ),
+            child: Image(
+              image: NetworkImage(
+                imagePath,
+              ),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         if (textString != null)
